@@ -5,10 +5,10 @@ async function SearchPage({
   searchParams,
 }: {
   searchParams: {
-    query: string;
+    query?: string;
   };
 }) {
-  const { query } = searchParams;
+  const { query = "" } = searchParams;
   const products = await searchProductsByName(query);
 
   if (!products.length) {
