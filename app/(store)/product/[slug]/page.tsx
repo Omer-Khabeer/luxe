@@ -1,8 +1,11 @@
 import { getProductBySlug } from "@/sanity/lib/products/getProductBySlug";
 import { notFound } from "next/navigation";
+<<<<<<< HEAD
 import Image from "next/image";
 import { imageUrl } from "@/lib/imageUrl";
 import { PortableText } from "next-sanity";
+=======
+>>>>>>> stable-x
 
 async function ProductPage({
   params,
@@ -18,6 +21,7 @@ async function ProductPage({
     return notFound();
   }
 
+<<<<<<< HEAD
   const isOutOfStock = product.stock != null && product.stock < 1;
 
   return (
@@ -57,6 +61,9 @@ async function ProductPage({
       </div>
     </div>
   );
+=======
+  return <div>hello World</div>;
+>>>>>>> stable-x
 }
 
 export default ProductPage;

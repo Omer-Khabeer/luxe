@@ -19,7 +19,11 @@ export default async function Home() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
+<<<<<<< HEAD
             src="/hero.jpg" // Replace with your shopping cart image path
+=======
+            src="/hero.webp" // Replace with your shopping cart image path
+>>>>>>> stable-x
             alt="Background"
             fill
             className="object-cover opacity-20 mix-blend-overlay"
