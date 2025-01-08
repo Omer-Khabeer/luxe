@@ -1,12 +1,8 @@
-import { imageUrl } from "@/lib/imageUrl";
 import { Product } from "@/sanity.types";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, ShoppingBag } from "lucide-react";
-<<<<<<< HEAD
-=======
 import { imageUrl } from "@/lib/imageUrl";
->>>>>>> stable-x
 
 function ProductThumb({ product }: { product: Product }) {
   const isOutOfStock = product.stock != null && product.stock <= 0;
@@ -76,11 +72,6 @@ function ProductThumb({ product }: { product: Product }) {
 
         {/* Description */}
         {product.description && (
-<<<<<<< HEAD
-          <p className="mt-1 text-sm text-gray-500 line-clamp-2">
-            {product.description}
-          </p>
-=======
           <div className="mt-1 text-sm text-gray-500 line-clamp-2">
             {product.description.map((block, i) => (
               <p key={i}>
@@ -89,7 +80,6 @@ function ProductThumb({ product }: { product: Product }) {
               </p>
             ))}
           </div>
->>>>>>> stable-x
         )}
 
         {/* Price */}
