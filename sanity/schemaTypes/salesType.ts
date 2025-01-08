@@ -2,15 +2,25 @@ import { TagIcon } from '@sanity/icons'
 import { defineType } from 'sanity'
 
 export const salesType =  defineType({
-    name: 'sales',
-    title: 'Sales',
+    name: 'sale',
+    title: 'Sale',
     type: 'document',
     icon : TagIcon,
     fields: [
         {
             name: 'title',
-            title: 'Title',
+            title: 'Sale Title',
             type: 'string',
+        },
+        {
+            name: 'description',
+            title: 'Sale Description',
+            type: 'text',
+        },
+        {
+            name: 'discountAmount',
+            title: 'Discount Amount',
+            type: 'number',
         },
         {
             name: 'couponCode',
@@ -23,42 +33,14 @@ export const salesType =  defineType({
             type: 'datetime',
         },
         {
-            name: 'isActive',
-            title: 'Is Active',
-            type: 'boolean',
-        },
-        {
-            name: 'discountAmount',
-            title: 'Discount Amount',
-            type: 'number',
-        },
-        {
-            name: 'description',
-            title: 'Description',
-            type: 'text',
-        },
-        {
-            name: 'category',
-            title: 'Category',
-            type: 'string',
-        },
-        {
-            name: 'price',
-            title: 'Price',
-            type: 'number',
-        },
-        {
-            name: 'date',
-            title: 'Date',
+            name: 'validUntil',
+            title: 'Valid Until',
             type: 'datetime',
         },
         {
-            name: 'image',
-            title: 'Image',
-            type: 'image',
-            options: {
-                hotspot: true,
-            },
+            name: 'isActive',
+            title: 'Is Active',
+            type: 'boolean',
         },
     ],
 preview: {

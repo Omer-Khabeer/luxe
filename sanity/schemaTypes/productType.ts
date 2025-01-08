@@ -1,11 +1,12 @@
-import { BasketIcon } from "@sanity/icons";
+import { TrolleyIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 
 export const productType = defineType({
     name: 'product',
     title: 'Products',
-    type: 'document',
-    icon: BasketIcon,
+    type: 'document',   
+    icon: TrolleyIcon,
+
     fields: [
         defineField({
             name: 'name',
@@ -17,12 +18,13 @@ export const productType = defineType({
             name: 'slug',
             type: 'slug',
             options: {
-              source: 'title',
+              source: 'name',
+              maxLength: 96,
             },
-          }),
+        }),
         defineField({
             name: 'image',
-            title: 'Image',
+            title: 'Product Image',
             type: 'image',
             options: {
                 hotspot: true
@@ -31,7 +33,7 @@ export const productType = defineType({
         defineField({
             name: 'description',
             title: 'Description',
-            type: 'text'
+            type: 'blockContent',
         }),
         defineField({
             name: 'price',
@@ -40,12 +42,27 @@ export const productType = defineType({
             validation: (Rule) => Rule.required().min(0),
         }),
         defineField({
+            name: 'salePrice',
+            title: 'Sale Price',
+            type: 'number',
+            validation: (Rule) => 
+                Rule.min(0)
+                    .custom((salePrice, context) => {
+                        const { document } = context;
+                        const regularPrice = document?.price;
+                        if (salePrice && typeof regularPrice === 'number' && salePrice >= regularPrice) {
+                            return 'Sale price must be less than regular price';
+                        }
+                        return true;
+                    }),
+            description: 'Set a sale price that is lower than the regular price'
+        }),
+        defineField({
             name: 'categories',
             title: 'Categories',
             type: 'array',
             of: [{ type: 'reference', to: {type: "category"} }],
         }),
-        
         defineField({
             name: 'sku',
             title: 'SKU',
@@ -64,12 +81,16 @@ export const productType = defineType({
             title: 'name',
             media: 'image',
             price: 'price',
+            salePrice: 'salePrice'
         },
         prepare(select){
+            const { title, media, price, salePrice } = select;
+            const displayPrice = salePrice ? `$${salePrice} (Was $${price})` : `$${price}`;
             return {
-                title: select.title,
-                media: select.media,
-                subtitle: `Price: $${select.price}`
+                title,
+                media,
+                subtitle: `Price: ${displayPrice}`
             }
-        }}});
-
+        }
+    }
+});
