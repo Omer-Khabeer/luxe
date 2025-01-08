@@ -3,10 +3,11 @@ import { Raleway } from "next/font/google";
 import "../globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/Header";
+import { SanityLive } from "@/sanity/lib/live";
 
 const raleway = Raleway({
   subsets: ["latin"],
-  variable: "--font-raleway",
+  variable: "--font-raleway", // This is important for Tailwind integration
 });
 
 export const metadata: Metadata = {
@@ -27,6 +28,8 @@ export default function RootLayout({
             <Header />
             {children}
           </main>
+
+          <SanityLive />
         </body>
       </html>
     </ClerkProvider>
