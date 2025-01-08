@@ -16,7 +16,7 @@ const ProductsView = ({ products, categories }: ProductsViewProps) => {
 
   const filteredProducts = selectedCategory
     ? products.filter((product) =>
-        product.categories?.some((cat) => cat._id === selectedCategory)
+        product.categories?.some((cat) => cat._ref === selectedCategory)
       )
     : products;
 
