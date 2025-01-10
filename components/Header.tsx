@@ -1,14 +1,7 @@
 "use client";
-import React, { useState } from "react";
-import {
-  Search,
-  ShoppingCart,
-  Menu,
-  X,
-  ChevronDown,
-  Package,
-} from "lucide-react";
-import { ClerkLoaded, SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import React, { useState, useEffect } from "react";
+import { Search, ShoppingCart, Menu, X, ChevronDown, User } from "lucide-react";
+import { ClerkLoaded, UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import Form from "next/form";
 
@@ -16,112 +9,217 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [cartCount] = useState(3);
+  const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const { isSignedIn, user } = useUser();
 
-  const categories = ["New Arrivals", "Women", "Men", "Accessories", "Sale"];
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const currencies = [
+    { code: "EUR", symbol: "€", flag: "🇪🇺", name: "Euro" },
+    { code: "USD", symbol: "$", flag: "🇺🇸", name: "US Dollar" },
+    { code: "GBP", symbol: "£", flag: "🇬🇧", name: "British Pound" },
+  ];
+
+  const navigationItems = [
+    {
+      name: "Products",
+      hasDropdown: true,
+      collections: [
+        { title: "Cards", image: "hero.webp", link: "#" },
+        { title: "Stands", image: "hero.webp", link: "#" },
+        { title: "Custom Products", image: "hero.webp", link: "#" },
+        { title: "All Products", image: "hero.webp", link: "#" },
+      ],
+    },
+    { name: "Features", hasDropdown: false },
+    { name: "Pricing", hasDropdown: false },
+    { name: "FAQs", hasDropdown: false },
+  ];
 
   return (
-    <div className="sticky top-0 z-50 w-full">
-      <div className="bg-black text-white text-center py-2 text-sm">
-        Free shipping on orders over $100
-      </div>
-
-      <header className="bg-white border-b">
+    <div
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+        scrolled ? "bg-white/90 backdrop-blur-md shadow-lg" : "bg-white"
+      }`}
+    >
+      <header className="border-b border-gray-100">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center">
+            {/* Left Section - Logo and Nav */}
+            <div className="flex items-center space-x-12">
+              {/* Mobile Menu Button */}
               <button
-                className="lg:hidden mr-4 p-2 hover:bg-gray-100 rounded-full"
+                className="lg:hidden mr-4 p-2 hover:bg-gray-100 rounded-full transition-transform duration-300 hover:rotate-180"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
-              <Link href="/" className="text-2xl font-bold">
-                LUXE
+
+              {/* Animated Logo */}
+              <Link href="/" className="group flex items-center">
+                <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center mr-2 transition-all duration-300 group-hover:rotate-45 group-hover:scale-110">
+                  <div className="w-4 h-4 bg-white rounded-sm transition-transform duration-300 group-hover:rotate-45"></div>
+                </div>
+                <span className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+                  Luxe
+                </span>
               </Link>
+
+              {/* Desktop Navigation */}
+              <nav className="hidden lg:flex items-center space-x-8">
+                {navigationItems.map((item) => (
+                  <div
+                    key={item.name}
+                    className="group relative"
+                    onMouseEnter={() => setHoveredItem(item.name)}
+                    onMouseLeave={() => setHoveredItem(null)}
+                  >
+                    <button
+                      className={`flex items-center space-x-1 px-3 py-2 rounded-md transition-all duration-300 ${
+                        hoveredItem === item.name
+                          ? "bg-purple-600 text-white scale-105"
+                          : "text-black font-bold hover:text-gray-900"
+                      }`}
+                    >
+                      <span>{item.name}</span>
+                      {item.hasDropdown && (
+                        <ChevronDown
+                          size={16}
+                          className={`transition-transform duration-300 ${
+                            hoveredItem === item.name ? "rotate-180" : ""
+                          }`}
+                        />
+                      )}
+                    </button>
+                    {item.hasDropdown && (
+                      <div className="absolute top-full left-0 w-screen max-w-screen-xl mx-auto opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-white shadow-xl rounded-lg p-6 mt-1 transform translate-y-2 group-hover:translate-y-0">
+                        <div className="grid grid-cols-4 gap-6">
+                          {item.collections?.map((collection) => (
+                            <Link
+                              href={collection.link}
+                              key={collection.title}
+                              className="group/card block transition-transform duration-300 hover:scale-105 relative"
+                            >
+                              <div
+                                className="absolute inset-0 bg-cover bg-center rounded-lg"
+                                style={{
+                                  backgroundImage: `url(${collection.image})`,
+                                }}
+                              ></div>
+                              <div className="relative z-10 p-4 bg-black bg-opacity-50 rounded-lg flex flex-col justify-end h-full">
+                                <h3 className="text-lg font-medium text-white mb-2">
+                                  {collection.title}
+                                </h3>
+                                <div className="text-sm text-white flex items-center">
+                                  View the collection
+                                  <svg
+                                    className="w-4 h-4 ml-1 transition-transform duration-300 group-hover/card:translate-x-1"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                  >
+                                    <path
+                                      d="M6 12L10 8L6 4"
+                                      stroke="currentColor"
+                                      strokeWidth="1.5"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    />
+                                  </svg>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </nav>
             </div>
 
-            <nav className="hidden lg:flex items-center space-x-8">
-              {categories.map((category) => (
-                <div key={category} className="group relative py-3">
-                  <button className="flex items-center gap-1 hover:text-gray-600">
-                    <span>{category}</span>
-                    <ChevronDown size={16} />
-                  </button>
-                  <div className="absolute top-full hidden group-hover:block w-48 bg-white shadow-lg rounded-md py-2">
-                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
-                      Subcategory 1
-                    </a>
-                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
-                      Subcategory 2
-                    </a>
-                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">
-                      Subcategory 3
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </nav>
+            {/* Right Section */}
+            <div className="flex items-center space-x-6">
+              {/* Currency Selector */}
+              <div className="hidden md:block relative">
+                <button
+                  onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
+                  className="flex items-center space-x-2 px-2 py-1 rounded-md hover:bg-gray-50 transition-all duration-300 hover:scale-105"
+                >
+                  <span className="text-lg">🇪🇺</span>
+                  <span className="text-sm font-medium">EUR €</span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-600 transition-transform duration-300 ${
+                      isCurrencyOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
 
-            <div className="flex items-center gap-4">
-              {/* Search bar */}
-              <Form action="/search">
+                {isCurrencyOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50 animate-slideDown">
+                    {currencies.map((currency, index) => (
+                      <button
+                        key={currency.code}
+                        className="w-full px-4 py-2 flex items-center space-x-3 hover:bg-gray-50 transition-all duration-300 hover:scale-105"
+                        onClick={() => setIsCurrencyOpen(false)}
+                        style={{
+                          animationDelay: `${index * 50}ms`,
+                        }}
+                      >
+                        <span className="text-lg">{currency.flag}</span>
+                        <div className="flex flex-col items-start">
+                          <span className="text-sm font-medium text-gray-900">
+                            {currency.name}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {currency.code} {currency.symbol}
+                          </span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Search Form - Desktop */}
+              <Form action="/search" className="hidden md:block">
                 <input
                   name="query"
                   type="text"
                   placeholder="Search products..."
-                  className="w-full p-2 focus:outline-none"
-                  autoFocus
+                  className="w-64 p-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 focus:scale-105"
                 />
-                {/* <div className="relative">
-                  <button
-                    onClick={() => setIsSearchOpen(!isSearchOpen)}
-                    className="p-2 hover:bg-gray-100 rounded-full"
-                  >
-                    <Search size={24} />
-                  </button>
-                  {isSearchOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-96 bg-white shadow-lg rounded-lg p-4">
-                      <div className="flex items-center border-b">
-                        <Search size={20} className="text-gray-400" />
-                       
-                      </div>
-                    </div>
-                  )}
-                </div> */}
               </Form>
 
               {/* User Area */}
-
               <ClerkLoaded>
                 <div className="flex items-center gap-4">
                   {isSignedIn ? (
-                    <>
-                      <Link
-                        href="/orders"
-                        className="flex items-center gap-2 hover:text-gray-600"
-                      >
-                        <Package size={24} />
-                        <span className="hidden md:inline">My Orders</span>
-                      </Link>
-                      <UserButton afterSignOutUrl="/" />
-                    </>
+                    <UserButton afterSignOutUrl="/" />
                   ) : (
-                    <SignInButton mode="modal">
-                      <button className="bg-black text-white px-4 py-2 rounded-full text-sm hover:bg-gray-800">
-                        Sign in
-                      </button>
-                    </SignInButton>
+                    <button className="p-2 hover:bg-gray-100 rounded-full transition-transform duration-300 hover:rotate-12">
+                      <User size={20} />
+                    </button>
                   )}
                 </div>
               </ClerkLoaded>
 
-              {/* User Area */}
-
-              <button className="p-2 hover:bg-gray-100 rounded-full relative">
-                <ShoppingCart size={24} />
+              {/* Animated Cart */}
+              <button className="p-2 hover:bg-gray-100 rounded-full relative transition-transform duration-300 hover:scale-110">
+                <ShoppingCart
+                  size={20}
+                  className="transition-transform duration-300 hover:rotate-12"
+                />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs">
+                  <span className="absolute -top-1 -right-1 bg-purple-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs animate-bounce">
                     {cartCount}
                   </span>
                 )}
@@ -131,29 +229,101 @@ const Header = () => {
         </div>
       </header>
 
-      {isMenuOpen && (
-        <div className="lg:hidden border-t bg-white">
-          <div className="container mx-auto px-4 py-4">
-            {categories.map((category) => (
-              <a
-                key={category}
-                href="#"
-                className="block py-3 border-b hover:bg-gray-50"
+      {/* Animated Mobile Menu */}
+      <div
+        className={`lg:hidden fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ${
+          isMenuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+      >
+        <div
+          className={`bg-white w-4/5 max-w-sm h-full transform transition-transform duration-300 ${
+            isMenuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="container p-4">
+            <Form action="/search" className="mb-4">
+              <input
+                name="query"
+                type="text"
+                placeholder="Search products..."
+                className="w-full p-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300"
+              />
+            </Form>
+
+            {navigationItems.map((item, index) => (
+              <div
+                key={item.name}
+                style={{
+                  animationDelay: `${index * 100}ms`,
+                }}
+                className="animate-slideIn"
               >
-                {category}
-              </a>
+                <div className="flex items-center justify-between py-3 border-b hover:bg-gray-50 transition-colors duration-300">
+                  <span>{item.name}</span>
+                  {item.hasDropdown && <ChevronDown size={16} />}
+                </div>
+                {item.hasDropdown && (
+                  <div className="py-2 space-y-2">
+                    {item.collections?.map((collection, colIndex) => (
+                      <div
+                        key={collection.title}
+                        className="px-4 py-2 transform transition-all duration-300 hover:translate-x-2"
+                        style={{
+                          animationDelay: `${index * 100 + colIndex * 50}ms`,
+                        }}
+                      >
+                        <h3 className="font-medium text-gray-900 mb-1">
+                          {collection.title}
+                        </h3>
+                        <Link
+                          href={collection.link}
+                          className="inline-block bg-purple-600 text-white text-sm px-4 py-2 rounded-md hover:bg-purple-700 transition-all duration-300 hover:shadow-lg"
+                        >
+                          View Collection
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
-            {isSignedIn && (
-              <Link
-                href="/orders"
-                className="block py-3 border-b hover:bg-gray-50"
-              >
-                My Orders
-              </Link>
-            )}
           </div>
         </div>
-      )}
+      </div>
+
+      <style jsx global>{`
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        .animate-slideDown {
+          animation: slideDown 0.3s ease-out forwards;
+        }
+
+        .animate-slideIn {
+          animation: slideIn 0.3s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 };
