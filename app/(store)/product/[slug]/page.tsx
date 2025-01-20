@@ -21,9 +21,11 @@ async function ProductPage({
     return notFound();
   }
 
-  const isOutOfStock = product.stock !== null && product.stock <= 0;
+  const isOutOfStock = product.stock !== null && (product.stock ?? 0) <= 0;
   const isLowStock =
-    product.stock !== null && product.stock <= 5 && product.stock > 0;
+    product.stock !== null &&
+    (product.stock ?? 0) <= 5 &&
+    (product.stock ?? 0) > 0;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -73,7 +75,7 @@ async function ProductPage({
           </div>
 
           {isLowStock && (
-            <Alert variant="warning" className="bg-amber-50 border-amber-200">
+            <Alert variant="default" className="bg-amber-50 border-amber-200">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
                 Only {product.stock} units left in stock

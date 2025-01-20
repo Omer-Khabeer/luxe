@@ -14,10 +14,10 @@ export const getProductBySlug = async (slug: string) => {
                 params: {slug},
             });
         
-            return product.data || [];
+            return product.data || null;
         } catch (error) {
             console.log("Error Fetching Data: ", error);
-            return [];
+            return null;
         }
 
 }
