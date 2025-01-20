@@ -7,15 +7,14 @@ import { PortableText } from "next-sanity";
 import { Heart, Share2, ShoppingCart, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-async function ProductPage({
-  params,
-}: {
+interface ProductPageProps {
   params: {
     slug: string;
   };
-}) {
-  const { slug } = await params;
-  const product = await getProductBySlug(slug);
+}
+
+async function ProductPage({ params }: ProductPageProps) {
+  const product = await getProductBySlug(params.slug);
 
   if (!product) {
     return notFound();
