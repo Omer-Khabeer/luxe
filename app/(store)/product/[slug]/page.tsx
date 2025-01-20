@@ -114,8 +114,8 @@ async function ProductPage({
           <div className="space-y-4 pt-6 border-t">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="space-y-1">
-                <p className="text-gray-500">SKU</p>
-                <p className="font-medium">{product.sku || "N/A"}</p>
+                {/* <p className="text-gray-500">SKU</p>
+                <p className="font-medium">{product.sku || "N/A"}</p> */}
               </div>
               <div className="space-y-1">
                 {/* <p className="text-gray-500">Category</p> */}
@@ -126,8 +126,8 @@ async function ProductPage({
                 {/* <p className="font-medium">{product.stock || "N/A"}</p> */}
               </div>
               <div className="space-y-1">
-                <p className="text-gray-500">Shipping</p>
-                <p className="font-medium">Free Shipping</p>
+                {/* <p className="text-gray-500">Shipping</p>
+                <p className="font-medium">Free Shipping</p> */}
               </div>
             </div>
           </div>
