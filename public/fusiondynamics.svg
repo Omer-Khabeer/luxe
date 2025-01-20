@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+  <rect width="200" height="100" fill="white"/>
+  <path d="M85 30 A20 20 0 0 1 115 30 A20 20 0 0 1 115 70 A20 20 0 0 1 85 70 A20 20 0 0 1 85 30" fill="none" stroke="#dc2626" stroke-width="4"/>
+  <path d="M75 40 A30 30 0 0 1 125 40 A30 30 0 0 1 125 60 A30 30 0 0 1 75 60 A30 30 0 0 1 75 40" fill="none" stroke="#ef4444" stroke-width="4"/>
+  <text x="40" y="90" font-family="Arial" font-weight="bold" font-size="14" fill="#991b1b">FUSION DYNAMICS</text>
+</svg>

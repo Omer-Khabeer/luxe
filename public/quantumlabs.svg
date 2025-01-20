@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+  <rect width="200" height="100" fill="white"/>
+  <circle cx="100" cy="50" r="25" fill="none" stroke="#9333ea" stroke-width="3"/>
+  <circle cx="100" cy="50" r="15" fill="none" stroke="#9333ea" stroke-width="3"/>
+  <circle cx="100" cy="50" r="5" fill="#9333ea"/>
+  <line x1="75" y1="50" x2="125" y2="50" stroke="#9333ea" stroke-width="3"/>
+  <line x1="100" y1="25" x2="100" y2="75" stroke="#9333ea" stroke-width="3"/>
+  <text x="40" y="90" font-family="Arial" font-weight="bold" font-size="14" fill="#6b21a8">QUANTUM LABS</text>
+</svg>

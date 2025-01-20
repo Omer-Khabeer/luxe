@@ -23,10 +23,10 @@ export default async function Home() {
       {/* Uncomment sections as needed */}
       {/* <BlackFridayBanner /> */}
       <Hero />
-      <CompanyLogoSlider />
+      {/* <CompanyLogoSlider /> */}
       {/* <DigitalBusinessCard /> */}
-      <DigitalCardEditor />
-      <DigitalCardCreator />
+      {/* <DigitalCardEditor /> */}
+      {/* <DigitalCardCreator /> */}
 
       {/* <CategoriesQuickAccess categories={categories} /> */}
 

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Search, ShoppingCart, Menu, X, ChevronDown, User } from "lucide-react";
-import { ClerkLoaded, UserButton, useUser } from "@clerk/nextjs";
+import { ClerkLoaded, UserButton, useUser, SignInButton } from "@clerk/nextjs";
 import Link from "next/link";
 import Form from "next/form";
 
@@ -12,7 +12,7 @@ const Header = () => {
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const { isSignedIn, user } = useUser();
+  const { isSignedIn, user, isLoaded } = useUser();
 
   // Handle scroll effect
   useEffect(() => {
@@ -34,16 +34,73 @@ const Header = () => {
       name: "Products",
       hasDropdown: true,
       collections: [
-        { title: "Cards", image: "hero.webp", link: "#" },
-        { title: "Stands", image: "hero.webp", link: "#" },
-        { title: "Custom Products", image: "hero.webp", link: "#" },
-        { title: "All Products", image: "hero.webp", link: "#" },
+        { title: "Cards", image: "hero.webp", link: "/products/cards" },
+        { title: "Stands", image: "hero.webp", link: "/products/stands" },
+        {
+          title: "Custom Products",
+          image: "hero.webp",
+          link: "/products/custom",
+        },
+        { title: "All Products", image: "hero.webp", link: "/products" },
       ],
     },
-    { name: "Features", hasDropdown: false },
-    { name: "Pricing", hasDropdown: false },
-    { name: "FAQs", hasDropdown: false },
+    { name: "Features", hasDropdown: false, link: "/features" },
+    { name: "Pricing", hasDropdown: false, link: "/pricing" },
+    { name: "FAQs", hasDropdown: false, link: "/faqs" },
   ];
+
+  // Cart button component
+  const CartButton = () => (
+    <Link href="/cart">
+      <button className="p-2 hover:bg-gray-100 rounded-full relative transition-transform duration-300 hover:scale-110">
+        <ShoppingCart
+          size={20}
+          className="transition-transform duration-300 hover:rotate-12"
+        />
+        {cartCount > 0 && (
+          <span className="absolute -top-1 -right-1 bg-purple-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs animate-bounce">
+            {cartCount}
+          </span>
+        )}
+      </button>
+    </Link>
+  );
+
+  // Authentication button component
+  const renderAuthButton = () => {
+    if (!isLoaded) {
+      return (
+        <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
+      );
+    }
+
+    if (isSignedIn) {
+      return (
+        <div className="flex items-center gap-4">
+          <UserButton
+            afterSignOutUrl="/"
+            appearance={{
+              elements: {
+                avatarBox: "w-9 h-9",
+              },
+            }}
+          />
+          <CartButton />
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex items-center gap-4">
+        <SignInButton mode="modal">
+          <button className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-all duration-300 hover:scale-105">
+            <User size={18} />
+            <span>Sign In</span>
+          </button>
+        </SignInButton>
+      </div>
+    );
+  };
 
   return (
     <div
@@ -60,11 +117,12 @@ const Header = () => {
               <button
                 className="lg:hidden mr-4 p-2 hover:bg-gray-100 rounded-full transition-transform duration-300 hover:rotate-180"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="Toggle Menu"
               >
                 {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
 
-              {/* Animated Logo */}
+              {/* Logo */}
               <Link href="/" className="group flex items-center">
                 <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center mr-2 transition-all duration-300 group-hover:rotate-45 group-hover:scale-110">
                   <div className="w-4 h-4 bg-white rounded-sm transition-transform duration-300 group-hover:rotate-45"></div>
@@ -83,31 +141,42 @@ const Header = () => {
                     onMouseEnter={() => setHoveredItem(item.name)}
                     onMouseLeave={() => setHoveredItem(null)}
                   >
-                    <button
-                      className={`flex items-center space-x-1 px-3 py-2 rounded-md transition-all duration-300 ${
-                        hoveredItem === item.name
-                          ? "bg-purple-600 text-white scale-105"
-                          : "text-black font-bold hover:text-gray-900"
-                      }`}
-                    >
-                      <span>{item.name}</span>
-                      {item.hasDropdown && (
+                    {item.hasDropdown ? (
+                      <button
+                        className={`flex items-center space-x-1 px-3 py-2 rounded-md transition-all duration-300 ${
+                          hoveredItem === item.name
+                            ? "bg-purple-600 text-white scale-105"
+                            : "text-black font-bold hover:text-gray-900"
+                        }`}
+                      >
+                        <span>{item.name}</span>
                         <ChevronDown
                           size={16}
                           className={`transition-transform duration-300 ${
                             hoveredItem === item.name ? "rotate-180" : ""
                           }`}
                         />
-                      )}
-                    </button>
+                      </button>
+                    ) : (
+                      <Link
+                        href={item.link || "#"}
+                        className={`flex items-center space-x-1 px-3 py-2 rounded-md transition-all duration-300 ${
+                          hoveredItem === item.name
+                            ? "bg-purple-600 text-white scale-105"
+                            : "text-black font-bold hover:text-gray-900"
+                        }`}
+                      >
+                        <span>{item.name}</span>
+                      </Link>
+                    )}
                     {item.hasDropdown && (
-                      <div className="absolute top-full left-0 w-screen max-w-screen-xl mx-auto opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-white shadow-xl rounded-lg p-6 mt-1 transform translate-y-2 group-hover:translate-y-0">
+                      <div className="absolute top-full left-0 w-screen max-w-5xl mx-auto opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-white shadow-xl rounded-lg p-6 mt-1 transform translate-y-2 group-hover:translate-y-0">
                         <div className="grid grid-cols-4 gap-6">
                           {item.collections?.map((collection) => (
                             <Link
                               href={collection.link}
                               key={collection.title}
-                              className="group/card block transition-transform duration-300 hover:scale-105 relative"
+                              className="group/card block transition-transform duration-300 hover:scale-105 relative h-48"
                             >
                               <div
                                 className="absolute inset-0 bg-cover bg-center rounded-lg"
@@ -199,37 +268,14 @@ const Header = () => {
                 />
               </Form>
 
-              {/* User Area */}
-              <ClerkLoaded>
-                <div className="flex items-center gap-4">
-                  {isSignedIn ? (
-                    <UserButton afterSignOutUrl="/" />
-                  ) : (
-                    <button className="p-2 hover:bg-gray-100 rounded-full transition-transform duration-300 hover:rotate-12">
-                      <User size={20} />
-                    </button>
-                  )}
-                </div>
-              </ClerkLoaded>
-
-              {/* Animated Cart */}
-              <button className="p-2 hover:bg-gray-100 rounded-full relative transition-transform duration-300 hover:scale-110">
-                <ShoppingCart
-                  size={20}
-                  className="transition-transform duration-300 hover:rotate-12"
-                />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-purple-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs animate-bounce">
-                    {cartCount}
-                  </span>
-                )}
-              </button>
+              {/* Authentication Area */}
+              <ClerkLoaded>{renderAuthButton()}</ClerkLoaded>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Animated Mobile Menu */}
+      {/* Mobile Menu */}
       <div
         className={`lg:hidden fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ${
           isMenuOpen
@@ -243,6 +289,11 @@ const Header = () => {
           }`}
         >
           <div className="container p-4">
+            {/* Mobile Auth */}
+            <div className="mb-6">
+              <ClerkLoaded>{renderAuthButton()}</ClerkLoaded>
+            </div>
+
             <Form action="/search" className="mb-4">
               <input
                 name="query"

@@ -4,14 +4,14 @@ import React from "react";
 const CompanyLogoSlider = () => {
   // Sample company data - replace with your actual logos
   const companies = [
-    { id: 1, name: "Company 1", logo: "/api/placeholder/200/100" },
-    { id: 2, name: "Company 2", logo: "/api/placeholder/200/100" },
-    { id: 3, name: "Company 3", logo: "/api/placeholder/200/100" },
-    { id: 4, name: "Company 4", logo: "/api/placeholder/200/100" },
-    { id: 5, name: "Company 5", logo: "/api/placeholder/200/100" },
-    { id: 6, name: "Company 6", logo: "/api/placeholder/200/100" },
-    { id: 7, name: "Company 7", logo: "/api/placeholder/200/100" },
-    { id: 8, name: "Company 8", logo: "/api/placeholder/200/100" },
+    { id: 1, name: "TechCo", logo: "/techco.svg" },
+    { id: 2, name: "GreenEco", logo: "/greeneco.svg" },
+    { id: 3, name: "DataSphere", logo: "/datasphere.svg" },
+    { id: 4, name: "Nova Systems", logo: "/novasystems.svg" },
+    { id: 5, name: "Quantum Labs", logo: "/quantumlabs.svg" },
+    { id: 6, name: "Infinite Solutions", logo: "/infinitesolutions.svg" },
+    { id: 7, name: "Fusion Dynamics", logo: "/fusiondynamics.svg" },
+    { id: 8, name: "CyberShield", logo: "/cybershield.svg" },
   ];
 
   // Duplicate the companies array to create seamless loop
@@ -20,8 +20,15 @@ const CompanyLogoSlider = () => {
   return (
     <div className="w-full bg-white py-16 overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h2 className="text-center text-3xl font-bold text-gray-900 mb-8">
+        {/* <h2 className="text-center text-3xl font-bold text-gray-900 mb-8">
           Trusted by Leading Companies
+        </h2> */}
+
+        <h2 className="text-center text-3xl md:text-5xl font-bold  mb-8">
+          Trusted by Leading{" "}
+          <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+            Companies
+          </span>{" "}
         </h2>
 
         {/* Logo slider container */}
