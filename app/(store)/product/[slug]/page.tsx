@@ -118,12 +118,12 @@ async function ProductPage({
                 <p className="font-medium">{product.sku || "N/A"}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-gray-500">Category</p>
-                <p className="font-medium">{product.category || "N/A"}</p>
+                {/* <p className="text-gray-500">Category</p> */}
+                {/* <p className="font-medium">{product.category || "N/A"}</p> */}
               </div>
               <div className="space-y-1">
-                <p className="text-gray-500">Stock</p>
-                <p className="font-medium">{product.stock || "N/A"}</p>
+                {/* <p className="text-gray-500">Stock</p> */}
+                {/* <p className="font-medium">{product.stock || "N/A"}</p> */}
               </div>
               <div className="space-y-1">
                 <p className="text-gray-500">Shipping</p>
