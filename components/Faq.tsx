@@ -3,7 +3,12 @@
 import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-const FaqItem = ({ question, answer }) => {
+interface FaqItemProps {
+  question: string;
+  answer: string;
+}
+
+const FaqItem: React.FC<FaqItemProps> = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

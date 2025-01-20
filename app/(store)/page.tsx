@@ -8,10 +8,10 @@ import BlackFridayBanner from "@/components/BlackFridayBanner";
 import CategoriesQuickAccess from "@/components/CategoriesQuickAccess";
 import Footer from "@/components/Footer";
 import CompanyLogoSlider from "@/components/CompanyLogoSlider";
-import DigitalBusinessCard from "@/components/DigitalBusinessCard";
-import DigitalCardPreview from "@/components/DigitalCardPreview";
-import DigitalCardCreator from "@/components/DigitalCardCreator";
-import DigitalCardEditor from "@/components/DigitalCardEditor";
+// import DigitalBusinessCard from "@/components/DigitalBusinessCard";
+// import DigitalCardPreview from "@/components/DigitalCardPreview";
+// import DigitalCardCreator from "@/components/DigitalCardCreator";
+// import DigitalCardEditor from "@/components/DigitalCardEditor";
 import Faq from "@/components/Faq";
 
 export default async function Home() {

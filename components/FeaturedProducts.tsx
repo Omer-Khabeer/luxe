@@ -22,7 +22,7 @@ export default function FeaturedProducts({
             NFC Cards
           </h2>
         </div>
-        <ProductsView products={products} categories={categories} />
+        <ProductsView products={products} />
       </div>
     </section>
   );
