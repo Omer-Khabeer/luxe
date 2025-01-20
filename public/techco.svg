@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+  <rect width="200" height="100" fill="white"/>
+  <path d="M40 30 L60 30 L80 70 L100 30 L120 30" stroke="#2563eb" stroke-width="8" fill="none"/>
+  <circle cx="140" cy="50" r="20" fill="#2563eb"/>
+  <text x="40" y="90" font-family="Arial" font-weight="bold" font-size="14" fill="#1e40af">TECHCO</text>
+</svg>

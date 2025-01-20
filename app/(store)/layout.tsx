@@ -22,7 +22,11 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider dynamic>
-      <html lang="en" className={`${raleway.variable}`}>
+      <html
+        lang="en"
+        className={`${raleway.variable}`}
+        suppressHydrationWarning
+      >
         <body>
           <main>
             <Header />

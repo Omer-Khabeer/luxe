@@ -17,7 +17,8 @@
     "@sanity/vision": "^3.68.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "framer-motion": "^11.15.0",
+    "faker": "^6.6.6",
+    "framer-motion": "^11.16.1",
     "lucide-react": "^0.469.0",
     "next": "^15.1.4",
     "next-sanity": "^9.8.30",
@@ -26,9 +27,11 @@
     "sanity": "^3.68.3",
     "styled-components": "^6.1.13",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

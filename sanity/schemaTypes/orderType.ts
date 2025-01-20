@@ -17,7 +17,7 @@ export const orderType = defineType({
       name: "stripeCheckoutSessionID",
       title: "Stripe Checkout Session ID",
       type: "string",
-      validation: (Rule) => Rule.optional(),
+      validation: (Rule) => Rule,
     }),
     defineField({
       name: "stripeCustomerID",
@@ -59,7 +59,7 @@ export const orderType = defineType({
       name: "amountDiscount",
       title: "Amount Discount",
       type: "number",
-      validation: (Rule) => Rule.optional(),
+      validation: (Rule) => Rule.min(0),
     }),
     defineField({
       name: "currency",

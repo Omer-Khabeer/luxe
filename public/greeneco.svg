@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+  <rect width="200" height="100" fill="white"/>
+  <path d="M60 70 C60 40, 90 40, 90 55 C90 40, 120 40, 120 70" fill="#22c55e"/>
+  <path d="M60 60 C60 30, 90 30, 90 45 C90 30, 120 30, 120 60" fill="#16a34a"/>
+  <text x="50" y="90" font-family="Arial" font-weight="bold" font-size="14" fill="#166534">GREENECO</text>
+</svg>

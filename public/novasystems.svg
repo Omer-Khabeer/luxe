@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+  <rect width="200" height="100" fill="white"/>
+  <polygon points="100,25 120,45 115,70 85,70 80,45" fill="#f59e0b" />
+  <polygon points="100,30 115,45 111,65 89,65 85,45" fill="#fbbf24" />
+  <text x="45" y="90" font-family="Arial" font-weight="bold" font-size="14" fill="#b45309">NOVA SYSTEMS</text>
+</svg>
