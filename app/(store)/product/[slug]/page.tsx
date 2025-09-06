@@ -89,7 +89,14 @@ async function ProductPage({
             )}
           </div>
 
-          <AddToCartButton product={product} isOutOfStock={isOutOfStock} />
+          <AddToCartButton
+            product={{
+              ...product,
+              name: product.name ?? "Unnamed Product",
+              slug: { current: product.slug?.current ?? "" },
+            }}
+            isOutOfStock={isOutOfStock}
+          />
 
           {/* Additional Product Information */}
           <div className="space-y-4 pt-6 border-t">

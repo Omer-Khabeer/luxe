@@ -4,7 +4,7 @@ import { auth } from '@clerk/nextjs/server';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20',
+  apiVersion: '2025-08-27.basil',
 });
 
 export async function POST(request: NextRequest) {
@@ -12,7 +12,8 @@ export async function POST(request: NextRequest) {
   
   try {
     // Get authenticated user from Clerk
-    const { userId } = auth();
+    const { userId } = await auth();
+
     
     const body = await request.json();
     console.log('Request body:', body);
@@ -58,6 +59,7 @@ export async function POST(request: NextRequest) {
           product_data: {
             name: 'Versandkosten',
             description: 'Standardversand',
+            images: [],
           },
           unit_amount: Math.round(shippingCost * 100),
         },

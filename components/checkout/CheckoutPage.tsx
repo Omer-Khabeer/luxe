@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -28,6 +29,8 @@ interface CheckoutFormData {
   newsletter: boolean;
 }
 
+type CheckoutErrors = Partial<Record<keyof CheckoutFormData, string>>;
+
 const CheckoutPage = () => {
   const { state } = useCart();
   const [currentStep, setCurrentStep] = useState(1);
@@ -45,8 +48,7 @@ const CheckoutPage = () => {
     agreeToTerms: false,
     newsletter: false,
   });
-
-  const [errors, setErrors] = useState<Partial<CheckoutFormData>>({});
+  const [errors, setErrors] = useState<CheckoutErrors>({});
   const [isProcessing, setIsProcessing] = useState(false);
 
   const shippingCost = state.total > 50 ? 0 : 4.99;
@@ -54,16 +56,16 @@ const CheckoutPage = () => {
 
   const handleInputChange = (
     field: keyof CheckoutFormData,
-    value: string | boolean
+    value: CheckoutFormData[typeof field]
   ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value as any }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
   const validateStep = (step: number): boolean => {
-    const newErrors: Partial<CheckoutFormData> = {};
+    const newErrors: CheckoutErrors = {};
 
     if (step === 1) {
       if (!formData.email) newErrors.email = "E-Mail ist erforderlich";
@@ -81,7 +83,6 @@ const CheckoutPage = () => {
       ) {
         newErrors.email = "Gültige E-Mail-Adresse erforderlich";
       }
-
       // German postal code validation
       if (formData.postalCode && !/^\d{5}$/.test(formData.postalCode)) {
         newErrors.postalCode = "Gültige deutsche Postleitzahl erforderlich";
@@ -89,8 +90,9 @@ const CheckoutPage = () => {
     }
 
     if (step === 2) {
-      if (!formData.agreeToTerms)
+      if (!formData.agreeToTerms) {
         newErrors.agreeToTerms = "Sie müssen den AGB zustimmen";
+      }
     }
 
     setErrors(newErrors);
@@ -107,14 +109,11 @@ const CheckoutPage = () => {
     if (!validateStep(2)) return;
 
     setIsProcessing(true);
-
     try {
       if (formData.paymentMethod === "stripe") {
         const response = await fetch("/api/checkout", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             items: state.items,
             customerInfo: formData,
@@ -122,30 +121,24 @@ const CheckoutPage = () => {
           }),
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to create checkout session");
-        }
+        if (!response.ok) throw new Error("Failed to create checkout session");
 
         const { sessionId } = await response.json();
-
         const stripe = await getStripe();
-        if (!stripe) {
-          throw new Error("Stripe failed to load");
-        }
+        if (!stripe) throw new Error("Stripe failed to load");
 
         const { error } = await stripe.redirectToCheckout({ sessionId });
-
         if (error) {
           console.error("Stripe error:", error);
           alert("Payment failed. Please try again.");
         }
       } else {
-        // Other payment methods - simulate success for now
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // Simulate success for other methods
+        await new Promise((r) => setTimeout(r, 2000));
         window.location.href = "/order-success";
       }
-    } catch (error) {
-      console.error("Payment failed:", error);
+    } catch (err) {
+      console.error("Payment failed:", err);
       alert("Payment failed. Please try again.");
     } finally {
       setIsProcessing(false);

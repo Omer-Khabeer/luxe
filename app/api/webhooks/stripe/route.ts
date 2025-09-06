@@ -6,15 +6,16 @@ import { emailService } from '@/lib/email-service';
 import { client } from '@/lib/sanity'; 
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20',
+  apiVersion: '2025-08-27.basil',
 });
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
-  const headersList = headers();
-  const sig = headersList.get('stripe-signature');
+  const sig = request.headers.get('stripe-signature');
+
+
 
   let event: Stripe.Event;
 
@@ -241,14 +242,14 @@ async function updateOrderPaymentStatus(paymentIntentId: string, status: 'paid' 
 async function updateProductInventory(items: any[]) {
   try {
     const transaction = client.transaction();
-    
+
     for (const item of items) {
       if (item.productId) {
-        // Decrease inventory count (assuming you have an inventory field)
-        transaction.patch(item.productId).dec({ inventory: item.quantity || 1 });
+        const patch = client.patch(item.productId).dec({ inventory: item.quantity || 1 });
+        transaction.patch(patch); // ✅ add patch to transaction
       }
     }
-    
+
     await transaction.commit();
     console.log('✅ Product inventory updated');
   } catch (error) {

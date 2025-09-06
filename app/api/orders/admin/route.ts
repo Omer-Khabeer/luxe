@@ -1,6 +1,6 @@
 // app/api/orders/admin/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { client } from '@/lib/sanity';
 // 
 // Helper function to check if user is admin
@@ -23,7 +23,8 @@ async function checkIfUserIsAdmin(userId: string): Promise<boolean> {
 
 export async function GET(request: NextRequest) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
+
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -136,7 +137,8 @@ export async function GET(request: NextRequest) {
 // POST method to create manual orders (admin only)
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
+
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
