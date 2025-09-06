@@ -11,17 +11,14 @@ export default function FeaturedProducts({
   categories,
 }: FeaturedProductsProps) {
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-20 bg-amber-50">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center mb-12 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold">
-            Our{" "}
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-              digital
-            </span>{" "}
-            NFC Cards
+          <h2 className="text-4xl font-bold text-center text-amber-900 mb-4">
+            Unsere Auswahl
           </h2>
         </div>
+
         <ProductsView products={products} />
       </div>
     </section>

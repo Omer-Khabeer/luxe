@@ -4,8 +4,9 @@ import { getProductBySlug } from "@/sanity/lib/products/getProductBySlug";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { PortableText } from "next-sanity";
-import { Heart, Share2, ShoppingCart, AlertCircle } from "lucide-react";
+import { Heart, Share2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import AddToCartButton from "@/components/AddToCartButton";
 
 async function ProductPage({
   params,
@@ -47,7 +48,7 @@ async function ProductPage({
             {isOutOfStock && (
               <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
                 <span className="text-white font-bold text-xl px-6 py-3 bg-red-500 rounded-lg">
-                  Out of Stock
+                  Nicht verfügbar
                 </span>
               </div>
             )}
@@ -56,11 +57,11 @@ async function ProductPage({
           <div className="flex justify-between items-center">
             <button className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
               <Share2 size={20} />
-              <span>Share</span>
+              <span>Teilen</span>
             </button>
             <button className="flex items-center gap-2 text-gray-600 hover:text-red-500 transition-colors">
               <Heart size={20} />
-              <span>Save</span>
+              <span>Merken</span>
             </button>
           </div>
         </div>
@@ -68,17 +69,16 @@ async function ProductPage({
         {/* Right Column - Product Details */}
         <div className="flex flex-col space-y-8">
           <div>
-            <h1 className="text-4xl font-bold mb-2">{product.name}</h1>
-            <div className="text-2xl font-semibold text-gray-900">
-              ${product.price?.toFixed(2)}
-            </div>
+            <h1 className="text-4xl font-bold mb-2 text-amber-900">
+              {product.name}
+            </h1>
           </div>
 
           {isLowStock && (
             <Alert variant="default" className="bg-amber-50 border-amber-200">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                Only {product.stock} units left in stock
+                Nur noch {product.stock} Stück auf Lager
               </AlertDescription>
             </Alert>
           )}
@@ -89,45 +89,18 @@ async function ProductPage({
             )}
           </div>
 
-          <div className="space-y-4 pt-6 border-t">
-            <button
-              disabled={isOutOfStock}
-              className={`w-full flex items-center justify-center gap-2 px-6 py-4 text-lg font-semibold rounded-full transition-colors from-purple-600 to-purple-800
-                ${
-                  isOutOfStock
-                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-gradient-to-br from-purple-600 to-purple-800 text-white hover:bg-purple-700"
-                }`}
-            >
-              <ShoppingCart size={24} />
-              {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-            </button>
-
-            {!isOutOfStock && (
-              <button className="w-full px-6 py-4 text-lg font-semibold rounded-full border-2 border-purple-600 text-purple-600 hover:bg-blue-50 transition-colors">
-                Buy Now
-              </button>
-            )}
-          </div>
+          <AddToCartButton product={product} isOutOfStock={isOutOfStock} />
 
           {/* Additional Product Information */}
           <div className="space-y-4 pt-6 border-t">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="space-y-1">
-                {/* <p className="text-gray-500">SKU</p>
-                <p className="font-medium">{product.sku || "N/A"}</p> */}
+                <p className="text-amber-600">Versand</p>
+                <p className="font-medium">Kostenloser Versand ab 50€</p>
               </div>
               <div className="space-y-1">
-                {/* <p className="text-gray-500">Category</p> */}
-                {/* <p className="font-medium">{product.category || "N/A"}</p> */}
-              </div>
-              <div className="space-y-1">
-                {/* <p className="text-gray-500">Stock</p> */}
-                {/* <p className="font-medium">{product.stock || "N/A"}</p> */}
-              </div>
-              <div className="space-y-1">
-                {/* <p className="text-gray-500">Shipping</p>
-                <p className="font-medium">Free Shipping</p> */}
+                <p className="text-amber-600">Qualität</p>
+                <p className="font-medium">Premium Qualität</p>
               </div>
             </div>
           </div>

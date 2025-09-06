@@ -4,10 +4,11 @@ import "../globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/Header";
 import { SanityLive } from "@/sanity/lib/live";
+import { CartProvider } from "@/hooks/useCart";
 
 const raleway = Raleway({
   subsets: ["latin"],
-  variable: "--font-raleway", // This is important for Tailwind integration
+  variable: "--font-raleway",
 });
 
 export const metadata: Metadata = {
@@ -28,12 +29,13 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <body>
-          <main>
-            <Header />
-            {children}
-          </main>
-
-          <SanityLive />
+          <CartProvider>
+            <main>
+              <Header />
+              {children}
+            </main>
+            <SanityLive />
+          </CartProvider>
         </body>
       </html>
     </ClerkProvider>
