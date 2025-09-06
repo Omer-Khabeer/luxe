@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import { imageUrl } from "@/lib/imageUrl";
 import { useCart } from "@/hooks/useCart";
@@ -12,12 +11,11 @@ interface ProductCardProps {
     name: string;
     slug: { current: string };
     image: any;
-    sizes?: Array<{
+    sizes: Array<{
       size: string;
       price: number;
       stock: number;
     }>;
-    price?: number;
   };
 }
 
@@ -26,22 +24,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const [isAdded, setIsAdded] = useState(false);
   const { addItem } = useCart();
 
-  // Create default sizes if none exist
-  const defaultSizes = [
-    { size: "250 gr", price: 9.99, stock: 10 },
-    { size: "500 gr", price: 15.99, stock: 10 },
-    { size: "1 kg", price: 20.99, stock: 10 },
-  ];
-
-  // Use existing sizes or create defaults
-  const sizes =
-    product.sizes && product.sizes.length > 0 ? product.sizes : defaultSizes;
-
+  const sizes = product.sizes || []; // should always exist because of Sanity validation
   const currentSize = sizes[selectedSizeIndex];
-  const isOutOfStock = (currentSize.stock || 0) <= 0;
+  const isOutOfStock = (currentSize?.stock ?? 0) <= 0;
 
   const handleAddToCart = () => {
-    if (isOutOfStock) return;
+    if (isOutOfStock || !currentSize) return;
 
     addItem({
       id: product._id,
@@ -58,6 +46,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <div className="bg-amber-800 rounded-xl overflow-hidden text-white shadow-lg hover:shadow-xl transition-all duration-300">
+      {/* Product Image */}
       <div className="relative h-64">
         {product.image ? (
           <Image
@@ -73,12 +62,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
         )}
       </div>
 
+      {/* Product Content */}
       <div className="p-6">
+        {/* Product Name */}
         <h3 className="text-xl font-bold mb-4 min-h-[3.5rem] line-clamp-2">
           {product.name}
         </h3>
 
-        {/* Size Selection - now always shows */}
+        {/* Size Selection */}
         <div className="flex flex-wrap gap-2 mb-4">
           {sizes.map((size, index) => (
             <button
@@ -95,15 +86,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
           ))}
         </div>
 
-        {/* Price - now always shows */}
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-2xl font-bold">
-            {currentSize.price.toFixed(2)} €
-          </span>
-          <span className="text-sm text-amber-200">inkl. MwSt.</span>
-        </div>
+        {/* Price */}
+        {currentSize && (
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-2xl font-bold">
+              {currentSize.price.toFixed(2)} €
+            </span>
+            <span className="text-sm text-amber-200">inkl. MwSt.</span>
+          </div>
+        )}
 
-        {/* Add to Cart Button */}
+        {/* Add to Cart */}
         <button
           onClick={handleAddToCart}
           disabled={isOutOfStock}

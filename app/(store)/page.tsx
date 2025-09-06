@@ -13,12 +13,6 @@
 // // import DigitalCardCreator from "@/components/DigitalCardCreator";
 // // import DigitalCardEditor from "@/components/DigitalCardEditor";
 // import Faq from "@/components/Faq";
-// import NestedFAQ from "@/components/FaqSolit";
-// import InvestmentPlanSelector from "@/components/InvestmentPlanSelector";
-// import DatenschutzHeroV2 from "@/components/datenschutzberater";
-// import AccessibleMermaidsWebsite from "@/components/mermaids";
-// import FlexgoldConfigurator from "@/components/FlexgoldConfigurator";
-// import JobsPortal from "@/components/JobsPortal";
 // import FeatureCards from "./FeatureCards";
 // import ServiceFeatures from "@/components/ServiceFeatures";
 // import ProductCard from "@/components/ProductCard";
@@ -43,13 +37,6 @@
 //       <DriedFruitsSection />
 //       {/* {FeaturedProducts() && <ProductGrid title="Unsere Auswahl" />} */}
 //       {/* {bestOffers && <ProductGrid title="Beste Angebote" />} */}
-//       {/* <NestedFAQ /> */}
-//       {/* <InvestmentPlanSelector /> */}
-//       {/* <DatenschutzHeroV2 /> */}
-//       {/* <AccessibleMermaidsWebsite /> */}
-//       {/* <JobsPortal /> */}
-
-//       {/* <CompanyLogoSlider /> */}
 //       {/* <DigitalBusinessCard /> */}
 //       {/* <DigitalCardEditor /> */}
 //       {/* <DigitalCardCreator /> */}
@@ -74,14 +61,13 @@ import NewsletterSection from "@/components/NewsletterSection";
 import BlackFridayBanner from "@/components/BlackFridayBanner";
 import CategoriesQuickAccess from "@/components/CategoriesQuickAccess";
 import Footer from "@/components/Footer";
-import CompanyLogoSlider from "@/components/CompanyLogoSlider";
+// import CompanyLogoSlider from "@/components/CompanyLogoSlider";
 import Faq from "@/components/Faq";
-import NestedFAQ from "@/components/FaqSolit";
-import InvestmentPlanSelector from "@/components/InvestmentPlanSelector";
-import DatenschutzHeroV2 from "@/components/datenschutzberater";
-import AccessibleMermaidsWebsite from "@/components/mermaids";
-import FlexgoldConfigurator from "@/components/FlexgoldConfigurator";
-import JobsPortal from "@/components/JobsPortal";
+// import InvestmentPlanSelector from "@/components/InvestmentPlanSelector";
+// import DatenschutzHeroV2 from "@/components/datenschutzberater";
+// import AccessibleMermaidsWebsite from "@/components/mermaids";
+// import FlexgoldConfigurator from "@/components/FlexgoldConfigurator";
+// import JobsPortal from "@/components/JobsPortal";
 import FeatureCards from "../../components/FeatureCards";
 import ServiceFeatures from "@/components/ServiceFeatures";
 import ProductCard from "@/components/ProductCard";
@@ -113,13 +99,6 @@ export default async function Home() {
       {/* <Faq /> */}
       {/* <NewsletterSection /> */}
       <Footer />
-      {/* <FlexgoldConfigurator /> */}
-      {/* <NestedFAQ /> */}
-      {/* <InvestmentPlanSelector /> */}
-      {/* <DatenschutzHeroV2 /> */}
-      {/* <AccessibleMermaidsWebsite /> */}
-      {/* <JobsPortal /> */}
-      {/* <CompanyLogoSlider /> */}
     </main>
   );
 }

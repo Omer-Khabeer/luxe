@@ -28,7 +28,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "resend": "^6.0.2",
-    "sanity": "^3.68.3",
+    "sanity": "^4.6.1",
     "stripe": "^18.5.0",
     "styled-components": "^6.1.13",
     "tailwind-merge": "^2.6.0",
