@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Product } from "@/sanity.types";
 import Image from "next/image";
 import { imageUrl } from "@/lib/imageUrl";
-import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
 import { ShoppingCart, Check } from "lucide-react";
 
@@ -11,29 +10,47 @@ interface ProductsViewProps {
   products: Product[];
 }
 
-const NutProductCard = ({ product }: { product: Product }) => {
+// Extend Product to include sizes safely
+interface ProductWithSizes extends Product {
+  sizes?: {
+    size: string;
+    price: number;
+    stock?: number;
+  }[];
+}
+
+const NutProductCard = ({ product }: { product: ProductWithSizes }) => {
   const [selectedSizeIndex, setSelectedSizeIndex] = useState(0);
   const [isAdded, setIsAdded] = useState(false);
   const { addItem } = useCart();
 
-  // Default sizes for nuts - can be overridden by Sanity
+  // Default sizes (if Sanity has no sizes set)
   const defaultSizes = [
-    { size: "250 gr", price: 9.99 },
-    { size: "500 gr", price: 15.99 },
-    { size: "1 kg", price: 20.99 },
+    { size: "250 gr", price: 9.99, stock: 10 },
+    { size: "500 gr", price: 15.99, stock: 10 },
+    { size: "1 kg", price: 20.99, stock: 10 },
   ];
 
-  const sizes = product.sizes || defaultSizes;
+  // Prefer Sanity sizes if available
+  const sizes =
+    product.sizes && product.sizes.length > 0 ? product.sizes : defaultSizes;
+
   const currentSize = sizes[selectedSizeIndex];
+  const isOutOfStock = (currentSize?.stock ?? 1) <= 0;
 
   const handleAddToCart = () => {
+    if (isOutOfStock) return;
+    // helper (put at top of the file or a utils file)
+    const toCartSlug = (slug: { current?: string } | undefined) => ({
+      current: typeof slug?.current === "string" ? slug.current : "",
+    });
     addItem({
       id: product._id!,
       name: product.name || "Product",
       price: currentSize.price,
       size: currentSize.size,
       image: product.image,
-      slug: product.slug,
+      slug: toCartSlug(product.slug),
     });
 
     setIsAdded(true);
@@ -67,14 +84,14 @@ const NutProductCard = ({ product }: { product: Product }) => {
 
         {/* Size Selection */}
         <div className="flex flex-wrap gap-2 mb-4">
-          {sizes.map((size: any, index: number) => (
+          {sizes.map((size, index) => (
             <button
               key={index}
               onClick={() => setSelectedSizeIndex(index)}
               className={`px-3 py-1 rounded-full text-sm border-2 transition-all ${
                 selectedSizeIndex === index
-                  ? "bg-amber-600 border-amber-600"
-                  : "border-amber-600 text-amber-200 hover:bg-amber-700"
+                  ? "bg-amber-600 border-amber-600 text-white"
+                  : "border-amber-600 text-amber-200 hover:bg-amber-700 hover:text-white"
               }`}
             >
               {size.size}
@@ -93,10 +110,13 @@ const NutProductCard = ({ product }: { product: Product }) => {
         {/* Add to Cart */}
         <button
           onClick={handleAddToCart}
+          disabled={isOutOfStock}
           className={`w-full font-semibold py-3 rounded-lg transition-all mb-2 flex items-center justify-center space-x-2 ${
-            isAdded
-              ? "bg-green-600 text-white"
-              : "bg-amber-600 hover:bg-amber-700 text-white"
+            isOutOfStock
+              ? "bg-gray-500 text-gray-300 cursor-not-allowed"
+              : isAdded
+                ? "bg-green-600 text-white"
+                : "bg-amber-600 hover:bg-amber-700 text-white"
           }`}
         >
           {isAdded ? (
@@ -104,6 +124,8 @@ const NutProductCard = ({ product }: { product: Product }) => {
               <Check className="w-5 h-5" />
               <span>Hinzugefügt!</span>
             </>
+          ) : isOutOfStock ? (
+            <span>Nicht verfügbar</span>
           ) : (
             <>
               <ShoppingCart className="w-5 h-5" />

@@ -1,18 +1,39 @@
-// lib/sanity/orderQueries.js
-export const orderQueries = {
-  // Get all orders with pagination and filters
-  getAllOrders: (filters = {}) => {
-    const { status, search, limit = 20, offset = 0 } = filters;
-    let query = `*[_type == "order"`;
-    const params = {};
+// sanity/orderQueries.ts
 
-    if (status && status !== 'all') {
+export type OrderStatus =
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled"
+  | "refunded"
+  | "all"
+  | string;
+
+export interface OrderFilters {
+  status?: OrderStatus;
+  search?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export const orderQueries = {
+  /**
+   * Get all orders with pagination and filters
+   */
+  getAllOrders(filters: OrderFilters = {}) {
+    const { status, search, limit = 20, offset = 0 } = filters;
+
+    let query = `*[_type == "order"`;
+    const params: Record<string, unknown> = {};
+
+    if (status && status !== "all") {
       query += ` && orderStatus == $status`;
       params.status = status;
     }
 
     if (search) {
       query += ` && (customerName match $search || email match $search || orderNumber match $search)`;
+      // GROQ `match` uses wildcards
       params.search = `*${search}*`;
     }
 
@@ -116,7 +137,7 @@ export const orderQueries = {
     }
   `,
 
-  // Get order statistics
+  // Dashboard statistics
   getOrderStats: `{
     "totalOrders": count(*[_type == "order"]),
     "totalRevenue": sum(*[_type == "order" && paymentStatus == "paid"].totalPrice),
@@ -150,11 +171,11 @@ export const orderQueries = {
       image,
       "orderCount": count(*[_type == "order" && references(^._id)]),
       "totalSold": sum(*[_type == "order" && references(^._id)].products[product._ref == ^._id].quantity),
-      "revenue": sum(*[_type == "order" && paymentStatus == "paid" && references(^._id)].products[product._ref == ^._id].quantity) * ^.price
+      "revenue": sum(*[_type == "order" && paymentStatus == "paid" && references(^._id)].products[product._ref == ^._id].quantity) * coalesce(^.price, 0)
     }[orderCount > 0] | order(orderCount desc)[0...10]
   }`,
 
-  // Get orders that need attention (failed payments, processing too long, etc.)
+  // Orders that may need attention
   getOrdersNeedingAttention: `
     *[_type == "order" && (
       paymentStatus == "failed" ||
@@ -173,168 +194,18 @@ export const orderQueries = {
     }
   `,
 
-  // Get monthly revenue data
+  // Monthly revenue series (expects $fromDate)
   getMonthlyRevenue: `
     *[_type == "order" && paymentStatus == "paid" && _createdAt > $fromDate] {
       totalPrice,
       currency,
-      "month": dateTime(_createdAt).format("YYYY-MM")
-    } | group by month {
-      "month": @.month,
-      "revenue": sum(@.totalPrice),
-      "orders": count(@)
+      "month": formatDateTime(_createdAt, "yyyy-MM")
+    } | group(month) {
+      "month": key,
+      "revenue": sum(totalPrice),
+      "orders": count()
     } | order(month asc)
   `,
-};
+} as const;
 
-// lib/sanity/orderUtils.js
-export const orderUtils = {
-  // Create a new order
-  createOrder: async (client, orderData) => {
-    try {
-      const result = await client.create({
-        _type: 'order',
-        ...orderData,
-      });
-      return { success: true, order: result };
-    } catch (error) {
-      console.error('Failed to create order:', error);
-      return { success: false, error: error.message };
-    }
-  },
-
-  // Update order status
-  updateOrderStatus: async (client, orderId, status, additionalData = {}) => {
-    try {
-      const result = await client
-        .patch(orderId)
-        .set({
-          orderStatus: status,
-          _updatedAt: new Date().toISOString(),
-          ...additionalData,
-        })
-        .commit();
-      
-      return { success: true, order: result };
-    } catch (error) {
-      console.error('Failed to update order:', error);
-      return { success: false, error: error.message };
-    }
-  },
-
-  // Update payment status
-  updatePaymentStatus: async (client, paymentIntentId, status) => {
-    try {
-      const orders = await client.fetch(
-        `*[_type == "order" && stripePaymentIntentID == $paymentIntentId]`,
-        { paymentIntentId }
-      );
-
-      const results = await Promise.all(
-        orders.map(order =>
-          client
-            .patch(order._id)
-            .set({
-              paymentStatus: status,
-              _updatedAt: new Date().toISOString(),
-            })
-            .commit()
-        )
-      );
-
-      return { success: true, orders: results };
-    } catch (error) {
-      console.error('Failed to update payment status:', error);
-      return { success: false, error: error.message };
-    }
-  },
-
-  // Add tracking information
-  addTrackingInfo: async (client, orderId, trackingNumber, carrier) => {
-    try {
-      const result = await client
-        .patch(orderId)
-        .set({
-          trackingNumber,
-          shippingCarrier: carrier,
-          orderStatus: 'shipped',
-          _updatedAt: new Date().toISOString(),
-        })
-        .commit();
-      
-      return { success: true, order: result };
-    } catch (error) {
-      console.error('Failed to add tracking info:', error);
-      return { success: false, error: error.message };
-    }
-  },
-
-  // Update inventory after order
-  updateInventory: async (client, products) => {
-    try {
-      const transaction = client.transaction();
-      
-      for (const item of products) {
-        if (item.productId) {
-          transaction.patch(item.productId).dec({ 
-            inventory: item.quantity || 1 
-          });
-        }
-      }
-      
-      await transaction.commit();
-      return { success: true };
-    } catch (error) {
-      console.error('Failed to update inventory:', error);
-      return { success: false, error: error.message };
-    }
-  },
-
-  // Restore inventory after cancellation
-  restoreInventory: async (client, products) => {
-    try {
-      const transaction = client.transaction();
-      
-      for (const item of products) {
-        if (item.productId) {
-          transaction.patch(item.productId).inc({ 
-            inventory: item.quantity || 1 
-          });
-        }
-      }
-      
-      await transaction.commit();
-      return { success: true };
-    } catch (error) {
-      console.error('Failed to restore inventory:', error);
-      return { success: false, error: error.message };
-    }
-  },
-
-  // Get order summary for analytics
-  getOrderSummary: async (client, dateFrom, dateTo) => {
-    try {
-      const summary = await client.fetch(`{
-        "totalOrders": count(*[_type == "order" && _createdAt >= $dateFrom && _createdAt <= $dateTo]),
-        "totalRevenue": sum(*[_type == "order" && paymentStatus == "paid" && _createdAt >= $dateFrom && _createdAt <= $dateTo].totalPrice),
-        "averageOrderValue": avg(*[_type == "order" && paymentStatus == "paid" && _createdAt >= $dateFrom && _createdAt <= $dateTo].totalPrice),
-        "topSellingProducts": *[_type == "product"] {
-          _id,
-          name,
-          "soldQuantity": sum(*[_type == "order" && paymentStatus == "paid" && _createdAt >= $dateFrom && _createdAt <= $dateTo && references(^._id)].products[product._ref == ^._id].quantity)
-        }[soldQuantity > 0] | order(soldQuantity desc)[0...5]
-      }`, { dateFrom, dateTo });
-      
-      return { success: true, summary };
-    } catch (error) {
-      console.error('Failed to get order summary:', error);
-      return { success: false, error: error.message };
-    }
-  },
-};
-
-// Export default object with both queries and utils
-export default {
-  queries: orderQueries,
-  utils: orderUtils,
-};
+export default orderQueries;

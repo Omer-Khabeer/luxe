@@ -1,87 +1,198 @@
-// app/dashboard/orders/page.jsx
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 
+export const dynamic = "force-dynamic";
+
+type OrderStatus =
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled"
+  | "refunded";
+type PaymentStatus = "paid" | "pending" | "failed" | "refunded";
+
+type OrderProduct = {
+  quantity: number;
+  variant?: string;
+  product: {
+    name: string;
+    image?: string; // URL string
+  };
+};
+
+type Order = {
+  _id: string;
+  orderNumber: string;
+  _createdAt: string;
+  totalPrice: number;
+  currency: string;
+  orderStatus: OrderStatus;
+  paymentStatus: PaymentStatus;
+  trackingNumber?: string;
+  shippingCarrier?: string;
+  products: OrderProduct[];
+};
+
+type OrdersResponse = {
+  orders: Order[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalCount: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+};
+
+type FilterValue = "all" | OrderStatus;
+
 export default function CustomerOrdersPage() {
-  const { user, isLoaded } = useUser();
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [filter, setFilter] = useState("all");
-  const [pagination, setPagination] = useState({
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<FilterValue>("all");
+  const [customerEmail, setCustomerEmail] = useState<string>("");
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [pagination, setPagination] = useState<OrdersResponse["pagination"]>({
     page: 1,
+    limit: 10,
+    totalCount: 0,
     totalPages: 1,
     hasNext: false,
     hasPrev: false,
   });
 
-  const fetchOrders = async (page = 1, status = "all") => {
+  useEffect(() => {
+    // Check if customer is already authenticated
+    const email = sessionStorage.getItem("customer_email");
+    if (email) {
+      setCustomerEmail(email);
+      setIsAuthenticated(true);
+      void fetchOrders(1, "all", email);
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (customerEmail.trim()) {
+      sessionStorage.setItem("customer_email", customerEmail);
+      setIsAuthenticated(true);
+      void fetchOrders(1, filter, customerEmail);
+    }
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("customer_email");
+    setIsAuthenticated(false);
+    setCustomerEmail("");
+    setOrders([]);
+  };
+
+  const fetchOrders = async (
+    page = 1,
+    status: FilterValue = "all",
+    email?: string
+  ): Promise<void> => {
     try {
       setLoading(true);
+      setError(null);
+
       const params = new URLSearchParams({
-        page: page.toString(),
+        page: String(page),
         limit: "10",
+        email: email || customerEmail,
       });
 
       if (status !== "all") {
         params.append("status", status);
       }
 
-      const response = await fetch(`/api/orders?${params}`);
-      const data = await response.json();
+      const response = await fetch(`/api/orders?${params.toString()}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data: OrdersResponse | { error?: string } = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to fetch orders");
+        throw new Error(
+          ("error" in data && data.error) || "Failed to fetch orders"
+        );
       }
 
-      setOrders(data.orders);
-      setPagination(data.pagination);
+      setOrders((data as OrdersResponse).orders);
+      setPagination((data as OrdersResponse).pagination);
     } catch (err) {
-      setError(err.message);
+      const message = err instanceof Error ? err.message : "Unknown error";
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (isLoaded && user) {
-      fetchOrders(1, filter);
-    }
-  }, [isLoaded, user, filter]);
-
-  const handleFilterChange = (newFilter) => {
+  const handleFilterChange = (newFilter: FilterValue): void => {
     setFilter(newFilter);
-    fetchOrders(1, newFilter);
+    void fetchOrders(1, newFilter);
   };
 
-  const handlePageChange = (newPage) => {
-    fetchOrders(newPage, filter);
+  const handlePageChange = (newPage: number): void => {
+    void fetchOrders(newPage, filter);
   };
 
-  if (!isLoaded) {
+  // Email input form
+  if (!isAuthenticated) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md w-full space-y-8">
+          <div>
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+              Meine Bestellungen
+            </h2>
+            <p className="mt-2 text-center text-sm text-gray-600">
+              Geben Sie Ihre E-Mail-Adresse ein, um Ihre Bestellungen zu sehen
+            </p>
+          </div>
+          <form className="mt-8 space-y-6" onSubmit={handleEmailSubmit}>
+            <div>
+              <label htmlFor="email" className="sr-only">
+                E-Mail-Adresse
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className="relative block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="E-Mail-Adresse"
+                value={customerEmail}
+                onChange={(e) => setCustomerEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <button
+                type="submit"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Bestellungen anzeigen
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     );
   }
 
-  if (!user) {
-    return (
-      <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-gray-900">
-          Please sign in to view your orders
-        </h2>
-      </div>
-    );
-  }
-
-  const getStatusBadge = (status) => {
-    const statusConfig = {
+  const getStatusBadge = (status: OrderStatus) => {
+    const statusConfig: Record<
+      OrderStatus,
+      { bg: string; text: string; label: string }
+    > = {
       processing: {
         bg: "bg-blue-100",
         text: "text-blue-800",
@@ -105,7 +216,7 @@ export default function CustomerOrdersPage() {
       },
     };
 
-    const config = statusConfig[status] || statusConfig.processing;
+    const config = statusConfig[status] ?? statusConfig.processing;
     return (
       <span
         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.text}`}
@@ -115,8 +226,11 @@ export default function CustomerOrdersPage() {
     );
   };
 
-  const getPaymentBadge = (status) => {
-    const statusConfig = {
+  const getPaymentBadge = (status: PaymentStatus) => {
+    const statusConfig: Record<
+      PaymentStatus,
+      { bg: string; text: string; label: string }
+    > = {
       paid: { bg: "bg-green-100", text: "text-green-800", label: "Bezahlt" },
       pending: {
         bg: "bg-yellow-100",
@@ -135,7 +249,7 @@ export default function CustomerOrdersPage() {
       },
     };
 
-    const config = statusConfig[status] || statusConfig.pending;
+    const config = statusConfig[status] ?? statusConfig.pending;
     return (
       <span
         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.text}`}
@@ -149,24 +263,34 @@ export default function CustomerOrdersPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Meine Bestellungen
-          </h1>
-          <p className="mt-2 text-gray-600">
-            Verwalten und verfolgen Sie Ihre Bestellungen
-          </p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Meine Bestellungen
+            </h1>
+            <p className="mt-2 text-gray-600">
+              Verwalten und verfolgen Sie Ihre Bestellungen für {customerEmail}
+            </p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+          >
+            Abmelden
+          </button>
         </div>
 
         {/* Filter Tabs */}
         <div className="mb-6">
           <nav className="flex space-x-4">
-            {[
-              { value: "all", label: "Alle" },
-              { value: "processing", label: "In Bearbeitung" },
-              { value: "shipped", label: "Versandt" },
-              { value: "delivered", label: "Zugestellt" },
-            ].map(({ value, label }) => (
+            {(
+              [
+                { value: "all", label: "Alle" },
+                { value: "processing", label: "In Bearbeitung" },
+                { value: "shipped", label: "Versandt" },
+                { value: "delivered", label: "Zugestellt" },
+              ] satisfies { value: FilterValue; label: string }[]
+            ).map(({ value, label }) => (
               <button
                 key={value}
                 onClick={() => handleFilterChange(value)}
@@ -182,14 +306,14 @@ export default function CustomerOrdersPage() {
           </nav>
         </div>
 
-        {/* Loading State */}
+        {/* Loading */}
         {loading && (
           <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
           </div>
         )}
 
-        {/* Error State */}
+        {/* Error */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <p className="text-red-600">
@@ -253,6 +377,7 @@ export default function CustomerOrdersPage() {
                                 className="flex items-center space-x-3"
                               >
                                 {item.product.image && (
+                                  // eslint-disable-next-line @next/next/no-img-element
                                   <img
                                     src={item.product.image}
                                     alt={item.product.name}
@@ -277,7 +402,7 @@ export default function CustomerOrdersPage() {
                           </div>
 
                           {/* Tracking Info */}
-                          {order.trackingNumber && (
+                          {!!order.trackingNumber && (
                             <div className="bg-blue-50 rounded-lg p-3 mb-4">
                               <p className="text-sm font-medium text-blue-900">
                                 Sendungsverfolgung

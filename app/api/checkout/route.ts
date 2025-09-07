@@ -1,6 +1,5 @@
 // app/api/checkout/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -11,10 +10,6 @@ export async function POST(request: NextRequest) {
   console.log('Checkout API called');
   
   try {
-    // Get authenticated user from Clerk
-    const { userId } = await auth();
-
-    
     const body = await request.json();
     console.log('Request body:', body);
     
@@ -32,7 +27,6 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('Creating Stripe session for:', customerInfo.email);
-    console.log('Clerk User ID:', userId);
 
     // Calculate shipping (matching your frontend logic)
     const shippingCost = cartTotal > 50 ? 0 : 4.99;
@@ -90,7 +84,7 @@ export async function POST(request: NextRequest) {
           phone: customerInfo.phone || '',
           deliveryInstructions: customerInfo.deliveryInstructions || '',
           newsletter: customerInfo.newsletter || false,
-          clerkId: userId, // Add Clerk user ID for Sanity
+          // Remove clerkId since we're not using Clerk anymore
         }),
         items: JSON.stringify(items.map((item: any) => ({
           ...item,
