@@ -171,7 +171,7 @@ async function mapItemsToSanityProducts(items: any[]) {
             quantity: item.quantity || 1,
             variant: item.size || '',
           });
-        } else {
+        } else if (item.name) { // Check if name exists before using it
           // Fallback: search by name
           const productByName = await client.fetch(
             `*[_type == "product" && name match $name][0]`,
