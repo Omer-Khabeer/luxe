@@ -1,7 +1,6 @@
 // app/api/webhooks/stripe/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { headers } from 'next/headers';
 import { emailService } from '@/lib/email-service';
 import { client } from '@/lib/sanity'; 
 
@@ -15,8 +14,6 @@ export async function POST(request: NextRequest) {
   const body = await request.text();
   const sig = request.headers.get('stripe-signature');
 
-
-
   let event: Stripe.Event;
 
   try {
@@ -26,7 +23,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Webhook signature verification failed' }, { status: 400 });
   }
 
-  // Handle the event
   switch (event.type) {
     case 'checkout.session.completed':
       const session = event.data.object as Stripe.Checkout.Session;
@@ -35,13 +31,11 @@ export async function POST(request: NextRequest) {
     
     case 'payment_intent.succeeded':
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
-      console.log(`Payment succeeded: ${paymentIntent.id}`);
       await updateOrderPaymentStatus(paymentIntent.id, 'paid');
       break;
     
     case 'payment_intent.payment_failed':
       const failedPayment = event.data.object as Stripe.PaymentIntent;
-      console.log(`Payment failed: ${failedPayment.id}`);
       await updateOrderPaymentStatus(failedPayment.id, 'failed');
       break;
     
@@ -54,8 +48,6 @@ export async function POST(request: NextRequest) {
 
 async function handleSuccessfulPayment(session: Stripe.Checkout.Session) {
   try {
-    console.log('Processing successful payment:', session.id);
-    
     // Parse metadata
     const customerInfo = JSON.parse(session.metadata?.customerInfo || '{}');
     const items = JSON.parse(session.metadata?.items || '[]');
@@ -65,22 +57,26 @@ async function handleSuccessfulPayment(session: Stripe.Checkout.Session) {
     // Generate order number
     const orderNumber = `ORDER-${Date.now()}-${session.id.slice(-8).toUpperCase()}`;
     
+    // Map products
+    const products = await mapItemsToSanityProducts(items);
+    
     // Create order in Sanity
     const sanityOrderData = {
       _type: 'order',
       orderNumber,
       stripeCheckoutSessionID: session.id,
       stripeCustomerID: session.customer as string || '',
-      clerkID: customerInfo.clerkId || '', // You'll need to pass this from frontend
+      clerkID: '', // Empty since we removed Clerk
       customerName: `${customerInfo.firstName || ''} ${customerInfo.lastName || ''}`.trim(),
       email: customerInfo.email || session.customer_email || '',
       stripePaymentIntentID: session.payment_intent as string || '',
       totalPrice: (session.amount_total || 0) / 100,
-      amountDiscount: 0, // Calculate if you have discounts
+      amountDiscount: 0,
       currency: (session.currency || 'eur').toUpperCase(),
-      products: await mapItemsToSanityProducts(items),
-      // Add additional fields
+      products: products,
       shippingInfo: {
+        firstName: customerInfo.firstName || '',
+        lastName: customerInfo.lastName || '',
         address: customerInfo.address || '',
         city: customerInfo.city || '',
         postalCode: customerInfo.postalCode || '',
@@ -90,11 +86,15 @@ async function handleSuccessfulPayment(session: Stripe.Checkout.Session) {
       },
       paymentStatus: session.payment_status === 'paid' ? 'paid' : 'pending',
       orderStatus: 'processing',
+      emailStatus: {
+        confirmationSent: false,
+        notificationSent: false,
+      },
+      notes: '',
+      customerNotes: customerInfo.deliveryInstructions || '',
     };
 
-    console.log('Creating order in Sanity:', orderNumber);
     const sanityOrder = await client.create(sanityOrderData);
-    console.log('✅ Order created in Sanity:', sanityOrder._id);
 
     // Prepare email data
     const emailOrderData = {
@@ -122,8 +122,6 @@ async function handleSuccessfulPayment(session: Stripe.Checkout.Session) {
       createdAt: new Date().toISOString(),
     };
 
-    console.log('Sending order emails for order:', orderNumber);
-
     // Send emails
     const emailResults = await emailService.sendOrderEmails(emailOrderData);
 
@@ -140,73 +138,61 @@ async function handleSuccessfulPayment(session: Stripe.Checkout.Session) {
       })
       .commit();
 
-    // Log results
-    if (emailResults.confirmation.success) {
-      console.log('✅ Confirmation email sent successfully:', emailResults.confirmation.messageId);
-    } else {
-      console.error('❌ Failed to send confirmation email:', emailResults.confirmation.error);
-    }
-
-    if (emailResults.notification.success) {
-      console.log('✅ Notification email sent successfully:', emailResults.notification.messageId);
-    } else {
-      console.error('❌ Failed to send notification email:', emailResults.notification.error);
-    }
-
-    // Update product inventory if you track it
-    await updateProductInventory(items);
-    
     console.log('Order processed successfully:', orderNumber);
     
   } catch (error) {
     console.error('Error processing successful payment:', error);
-    
-    // Still try to send a basic notification email even if there's an error
-    try {
-      if (session.customer_email) {
-        console.log('Attempting to send basic confirmation email due to processing error');
-      }
-    } catch (emailError) {
-      console.error('Failed to send fallback email:', emailError);
-    }
+    throw error;
   }
 }
 
-// Helper function to map items to Sanity product references
 async function mapItemsToSanityProducts(items: any[]) {
   const products = [];
   
-  for (const item of items) {
-    // If you have product IDs in your items, use them to create references
-    if (item.productId) {
-      products.push({
-        _type: 'object',
-        product: {
-          _type: 'reference',
-          _ref: item.productId,
-        },
-        quantity: item.quantity || 1,
-      });
-    } else {
-      // If no product ID, you might need to find the product by name or create a generic product
-      // For now, we'll log this case and skip
-      console.warn('Item without productId found:', item);
-      
-      // You could search for the product by name:
-      const existingProduct = await client.fetch(
-        `*[_type == "product" && name match $name][0]`,
-        { name: item.name }
-      );
-      
-      if (existingProduct) {
-        products.push({
-          _type: 'object',
-          product: {
-            _type: 'reference',
-            _ref: existingProduct._id,
-          },
-          quantity: item.quantity || 1,
-        });
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const productId = item.productId || item._id || item.id;
+    
+    if (productId) {
+      try {
+        const existingProduct = await client.fetch(
+          `*[_type == "product" && _id == $productId][0]`,
+          { productId }
+        );
+        
+        if (existingProduct) {
+          products.push({
+            _type: 'object',
+            _key: `product-${i}-${Date.now()}`,
+            product: {
+              _type: 'reference',
+              _ref: productId,
+            },
+            quantity: item.quantity || 1,
+            variant: item.size || '',
+          });
+        } else {
+          // Fallback: search by name
+          const productByName = await client.fetch(
+            `*[_type == "product" && name match $name][0]`,
+            { name: item.name }
+          );
+          
+          if (productByName) {
+            products.push({
+              _type: 'object',
+              _key: `product-${i}-${Date.now()}`,
+              product: {
+                _type: 'reference',
+                _ref: productByName._id,
+              },
+              quantity: item.quantity || 1,
+              variant: item.size || '',
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error checking product in Sanity:', error);
       }
     }
   }
@@ -214,7 +200,6 @@ async function mapItemsToSanityProducts(items: any[]) {
   return products;
 }
 
-// Helper function to update order payment status
 async function updateOrderPaymentStatus(paymentIntentId: string, status: 'paid' | 'failed') {
   try {
     const orders = await client.fetch(
@@ -230,30 +215,8 @@ async function updateOrderPaymentStatus(paymentIntentId: string, status: 'paid' 
           updatedAt: new Date().toISOString()
         })
         .commit();
-      
-      console.log(`Updated payment status for order ${order.orderNumber} to ${status}`);
     }
   } catch (error) {
     console.error('Failed to update payment status:', error);
-  }
-}
-
-// Helper function to update product inventory
-async function updateProductInventory(items: any[]) {
-  try {
-    const transaction = client.transaction();
-
-    for (const item of items) {
-      if (item.productId) {
-        const patch = client.patch(item.productId).dec({ inventory: item.quantity || 1 });
-        transaction.patch(patch); // ✅ add patch to transaction
-      }
-    }
-
-    await transaction.commit();
-    console.log('✅ Product inventory updated');
-  } catch (error) {
-    console.error('Failed to update inventory:', error);
-    // Don't throw error here to avoid breaking order creation
   }
 }

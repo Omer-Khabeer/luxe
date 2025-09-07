@@ -111,6 +111,8 @@ const CheckoutPage = () => {
     setIsProcessing(true);
     try {
       if (formData.paymentMethod === "stripe") {
+        console.log("Sending checkout request...");
+
         const response = await fetch("/api/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -121,25 +123,43 @@ const CheckoutPage = () => {
           }),
         });
 
-        if (!response.ok) throw new Error("Failed to create checkout session");
+        console.log("Response status:", response.status);
 
-        const { sessionId } = await response.json();
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error("Checkout API error:", errorData);
+          throw new Error(
+            errorData.error || errorData.message || `HTTP ${response.status}`
+          );
+        }
+
+        const data = await response.json();
+        console.log("Checkout response:", data);
+
+        if (!data.sessionId) {
+          throw new Error("No session ID received from server");
+        }
+
         const stripe = await getStripe();
         if (!stripe) throw new Error("Stripe failed to load");
 
-        const { error } = await stripe.redirectToCheckout({ sessionId });
+        console.log("Redirecting to Stripe checkout...");
+        const { error } = await stripe.redirectToCheckout({
+          sessionId: data.sessionId,
+        });
+
         if (error) {
-          console.error("Stripe error:", error);
-          alert("Payment failed. Please try again.");
+          console.error("Stripe redirect error:", error);
+          throw new Error(`Stripe error: ${error.message}`);
         }
-      } else {
-        // Simulate success for other methods
-        await new Promise((r) => setTimeout(r, 2000));
-        window.location.href = "/order-success";
       }
     } catch (err) {
       console.error("Payment failed:", err);
-      alert("Payment failed. Please try again.");
+
+      // Show more specific error message
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error occurred";
+      alert(`Payment failed: ${errorMessage}`);
     } finally {
       setIsProcessing(false);
     }

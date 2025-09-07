@@ -2,7 +2,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+// Check if Stripe secret key is available
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('STRIPE_SECRET_KEY environment variable is not set');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2025-08-27.basil',
 });
 
@@ -31,19 +36,42 @@ export async function POST(request: NextRequest) {
     // Calculate shipping (matching your frontend logic)
     const shippingCost = cartTotal > 50 ? 0 : 4.99;
 
+    // Helper function to extract image URL from Sanity image object
+    const getImageUrl = (imageObj: any): string | undefined => {
+      if (!imageObj) return undefined;
+      
+      // If it's already a string URL, return it
+      if (typeof imageObj === 'string') return imageObj;
+      
+      // If it's a Sanity image object, extract the URL
+      if (imageObj.asset && imageObj.asset._ref) {
+        // Convert Sanity image reference to URL
+        const ref = imageObj.asset._ref;
+        const [_file, id, dimensionsAndFormat] = ref.split('-');
+        const [dimensions, format] = dimensionsAndFormat.split('.');
+        return `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'your-project-id'}/production/${id}-${dimensions}.${format}`;
+      }
+      
+      return undefined;
+    };
+
     // Create line items for products
-    const lineItems = items.map((item: any) => ({
-      price_data: {
-        currency: 'eur',
-        product_data: {
-          name: item.name || 'Digital Card',
-          description: item.size ? `Größe: ${item.size}` : undefined,
-          images: item.image ? [item.image] : undefined, // Add product image if available
+    const lineItems = items.map((item: any) => {
+      const imageUrl = getImageUrl(item.image);
+      
+      return {
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: item.name || 'Digital Card',
+            description: item.size ? `Größe: ${item.size}` : undefined,
+            images: imageUrl ? [imageUrl] : undefined, // Only include if we have a valid URL
+          },
+          unit_amount: Math.round(item.price * 100), // Convert to cents
         },
-        unit_amount: Math.round(item.price * 100), // Convert to cents
-      },
-      quantity: item.quantity || 1,
-    }));
+        quantity: item.quantity || 1,
+      };
+    });
 
     // Add shipping as line item if applicable
     if (shippingCost > 0) {
@@ -89,7 +117,7 @@ export async function POST(request: NextRequest) {
         items: JSON.stringify(items.map((item: any) => ({
           ...item,
           // Make sure to include product ID for Sanity reference
-          productId: item._id || item.productId, // Use _id from Sanity or productId
+          productId: item._id || item.productId || item.id, // Use _id from Sanity or productId or fallback to id
           name: item.name,
           price: item.price,
           quantity: item.quantity,

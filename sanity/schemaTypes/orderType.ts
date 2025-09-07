@@ -1,4 +1,4 @@
-// sanity/schemaTypes/orderType.ts  (stays .ts)
+// sanity/schemaTypes/orderType.ts
 import { BasketIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
 import {
@@ -71,21 +71,17 @@ export const orderType = defineType({
       title: "Order Number",
       type: "string",
       validation: (Rule) => Rule.required(),
-      readOnly: true,
     }),
     defineField({
       name: "stripeCheckoutSessionID",
       title: "Stripe Checkout Session ID",
       type: "string",
       validation: (Rule) => Rule.required(),
-      readOnly: true,
     }),
     defineField({
-      name: "clerkID",
-      title: "Clerk User ID",
+      name: "stripeCustomerID",
+      title: "Stripe Customer ID",
       type: "string",
-      validation: (Rule) => Rule.required(),
-      readOnly: true,
     }),
     defineField({
       name: "customerName",
@@ -104,7 +100,6 @@ export const orderType = defineType({
       title: "Stripe Payment Intent ID",
       type: "string",
       validation: (Rule) => Rule.required(),
-      readOnly: true,
     }),
     defineField({
       name: "totalPrice",
@@ -148,6 +143,73 @@ export const orderType = defineType({
       initialValue: "pending",
     }),
     defineField({
+      name: "trackingNumber",
+      title: "Tracking Number",
+      type: "string",
+      description: "Package tracking number from shipping carrier",
+    }),
+    defineField({
+      name: "shippingCarrier",
+      title: "Shipping Carrier",
+      type: "string",
+      options: {
+        list: [
+          { title: "DHL", value: "dhl" },
+          { title: "DPD", value: "dpd" },
+          { title: "Hermes", value: "hermes" },
+          { title: "UPS", value: "ups" },
+          { title: "FedEx", value: "fedex" },
+        ],
+      },
+    }),
+    defineField({
+      name: "shippingInfo",
+      title: "Shipping Information",
+      type: "object",
+      fields: [
+        defineField({
+          name: "firstName",
+          title: "First Name",
+          type: "string",
+        }),
+        defineField({
+          name: "lastName",
+          title: "Last Name",
+          type: "string",
+        }),
+        defineField({
+          name: "address",
+          title: "Address",
+          type: "string",
+        }),
+        defineField({
+          name: "city",
+          title: "City",
+          type: "string",
+        }),
+        defineField({
+          name: "postalCode",
+          title: "Postal Code",
+          type: "string",
+        }),
+        defineField({
+          name: "country",
+          title: "Country",
+          type: "string",
+        }),
+        defineField({
+          name: "phone",
+          title: "Phone",
+          type: "string",
+        }),
+        defineField({
+          name: "deliveryInstructions",
+          title: "Delivery Instructions",
+          type: "text",
+        }),
+      ],
+    }),
+    defineField({
       name: "products",
       title: "Products",
       type: "array",
@@ -176,6 +238,47 @@ export const orderType = defineType({
           ],
         }),
       ],
+    }),
+    defineField({
+      name: "emailStatus",
+      title: "Email Status",
+      type: "object",
+      fields: [
+        defineField({
+          name: "confirmationSent",
+          title: "Confirmation Sent",
+          type: "boolean",
+          initialValue: false,
+        }),
+        defineField({
+          name: "confirmationSentAt",
+          title: "Confirmation Sent At",
+          type: "datetime",
+        }),
+        defineField({
+          name: "notificationSent",
+          title: "Notification Sent",
+          type: "boolean",
+          initialValue: false,
+        }),
+        defineField({
+          name: "notificationSentAt",
+          title: "Notification Sent At",
+          type: "datetime",
+        }),
+      ],
+    }),
+    defineField({
+      name: "notes",
+      title: "Internal Notes",
+      type: "text",
+      description: "Internal notes for admin use",
+    }),
+    defineField({
+      name: "customerNotes",
+      title: "Customer Notes",
+      type: "text",
+      description: "Notes or special requests from the customer",
     }),
   ],
   preview: {
