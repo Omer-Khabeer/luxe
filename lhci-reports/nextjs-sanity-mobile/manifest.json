@@ -1,0 +1,146 @@
+[
+  {
+    "url": "https://luxe-coral.vercel.app/shop",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_51_40.report.html",
+    "jsonPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_51_40.report.json",
+    "summary": {
+      "performance": 0.69,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "https://luxe-coral.vercel.app/shop",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_52_10.report.html",
+    "jsonPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_52_10.report.json",
+    "summary": {
+      "performance": 0.73,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "https://luxe-coral.vercel.app/shop",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_52_40.report.html",
+    "jsonPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_52_40.report.json",
+    "summary": {
+      "performance": 0.67,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "https://luxe-coral.vercel.app/shop",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_53_12.report.html",
+    "jsonPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_53_12.report.json",
+    "summary": {
+      "performance": 0.78,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "https://luxe-coral.vercel.app/shop",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_54_15.report.html",
+    "jsonPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_54_15.report.json",
+    "summary": {
+      "performance": 0.89,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "https://luxe-coral.vercel.app/shop",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_54_46.report.html",
+    "jsonPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_54_46.report.json",
+    "summary": {
+      "performance": 0.88,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "https://luxe-coral.vercel.app/shop",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_55_17.report.html",
+    "jsonPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_55_17.report.json",
+    "summary": {
+      "performance": 0.89,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "https://luxe-coral.vercel.app/shop",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_55_48.report.html",
+    "jsonPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_55_48.report.json",
+    "summary": {
+      "performance": 0.88,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "https://luxe-coral.vercel.app/shop",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_56_19.report.html",
+    "jsonPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_56_19.report.json",
+    "summary": {
+      "performance": 0.89,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "https://luxe-coral.vercel.app/shop",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_56_50.report.html",
+    "jsonPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_56_50.report.json",
+    "summary": {
+      "performance": 0.89,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "https://luxe-coral.vercel.app/shop",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_57_22.report.html",
+    "jsonPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_57_22.report.json",
+    "summary": {
+      "performance": 0.88,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "https://luxe-coral.vercel.app/shop",
+    "isRepresentativeRun": true,
+    "htmlPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_53_44.report.html",
+    "jsonPath": "/Users/omerkhaber/Downloads/cms-measurements-repro/lhci-reports/nextjs-sanity-mobile/luxe_coral_vercel_app-shop-2025_10_12_20_53_44.report.json",
+    "summary": {
+      "performance": 0.87,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  }
+]

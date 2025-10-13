@@ -1,0 +1,24 @@
+{
+  "measurement_date": "2025-10-12T20:28:32Z",
+  "cms_type": "headless",
+  "cms_name": "Next.js + Sanity",
+  "cms_variant": "nextsanity",
+  "site_url": "https://luxe-coral.vercel.app",
+  "lighthouse_version": "12.6.1",
+  "chrome_version": "141.0.0.0",
+  "number_of_runs": 12,
+  "profile": "desktop",
+  "settings": {
+    "formFactor": "desktop",
+    "screenEmulation": {
+      "disabled": true
+    },
+    "throttlingMethod": "provided",
+    "throttling": {
+      "note": "No throttling for desktop profile"
+    }
+  },
+  "git_commit": "not_in_git",
+  "thesis_section": "3.5.4",
+  "notes": "Desktop profile - No throttling per thesis specification"
+}

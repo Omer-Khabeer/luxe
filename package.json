@@ -1,0 +1,13 @@
+{
+  "name": "cms-measurements-repro",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "@lhci/cli": "^0.13.0",
+    "lighthouse": "^12.0.0"
+  },
+  "scripts": {
+    "lhci:mobile": "bash ./scripts/lhci-mobile.sh",
+    "lhci:desktop": "bash ./scripts/lhci-desktop.sh"
+  }
+}

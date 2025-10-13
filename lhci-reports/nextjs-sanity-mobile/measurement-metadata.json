@@ -1,0 +1,28 @@
+{
+  "measurement_date": "2025-10-12T20:45:25Z",
+  "cms_type": "headless",
+  "cms_name": "Next.js + Sanity",
+  "cms_variant": "nextsanity",
+  "site_url": "https://luxe-coral.vercel.app",
+  "lighthouse_version": "12.6.1",
+  "chrome_version": "141.0.0.0",
+  "number_of_runs": 12,
+  "profile": "mobile",
+  "pages_measured": 2,
+  "settings": {
+    "formFactor": "mobile",
+    "screenEmulation": {
+      "mobile": true
+    },
+    "throttlingMethod": "devtools",
+    "throttling": {
+      "requestLatencyMs": 400,
+      "downloadThroughputKbps": 400,
+      "uploadThroughputKbps": 400,
+      "cpuSlowdownMultiplier": 4
+    }
+  },
+  "git_commit": "not_in_git",
+  "thesis_section": "3.5.4",
+  "notes": "Mobile profile - Slow 4G-like parameters per thesis specification. Only measuring pages that exist."
+}

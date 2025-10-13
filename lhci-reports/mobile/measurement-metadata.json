@@ -1,0 +1,21 @@
+{
+  "measurement_date": "2025-10-12T20:12:22Z",
+  "cms_type": "traditional",
+  "cms_name": "WordPress + WooCommerce",
+  "site_url": "https://issnuss.pixel-crafting.com",
+  "test_page": "checkout",
+  "product_tested": "/badami-pistazien-gerostet-und-gesalzen/",
+  "lighthouse_version": "12.6.1",
+  "chrome_version": "141.0.0.0",
+  "number_of_runs": 12,
+  "settings": {
+    "preset": "perf",
+    "emulated_form_factor": "mobile",
+    "throttling": {
+      "cpu_slowdown_multiplier": 4,
+      "network": "mobile_3g"
+    }
+  },
+  "puppeteer_script": "tools/puppeteer/wp-checkout.js",
+  "git_commit": "not_in_git"
+}

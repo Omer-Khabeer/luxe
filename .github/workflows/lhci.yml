@@ -1,0 +1,28 @@
+name: LHCI (collect on push)
+on:
+  push:
+    branches: [ main ]
+jobs:
+  lhci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Run LHCI (mobile)
+        env:
+          WP_BASE: ${{ secrets.WP_BASE }}
+          NX_BASE: ${{ secrets.NX_BASE }}
+        run: bash ./scripts/lhci-mobile.sh
+      - name: Run LHCI (desktop)
+        env:
+          WP_BASE: ${{ secrets.WP_BASE }}
+          NX_BASE: ${{ secrets.NX_BASE }}
+        run: bash ./scripts/lhci-desktop.sh
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lhci-reports
+          path: lhci-reports

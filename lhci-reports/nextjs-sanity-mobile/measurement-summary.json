@@ -1,0 +1,242 @@
+{
+  "metadata": {
+    "measurement_date": "2025-10-12T20:45:25Z",
+    "cms_type": "headless",
+    "cms_name": "Next.js + Sanity",
+    "cms_variant": "nextsanity",
+    "site_url": "https://luxe-coral.vercel.app",
+    "lighthouse_version": "12.6.1",
+    "chrome_version": "141.0.0.0",
+    "number_of_runs": 12,
+    "profile": "mobile",
+    "pages_measured": 2,
+    "settings": {
+      "formFactor": "mobile",
+      "screenEmulation": {
+        "mobile": true
+      },
+      "throttlingMethod": "devtools",
+      "throttling": {
+        "requestLatencyMs": 400,
+        "downloadThroughputKbps": 400,
+        "uploadThroughputKbps": 400,
+        "cpuSlowdownMultiplier": 4
+      }
+    },
+    "git_commit": "not_in_git",
+    "thesis_section": "3.5.4",
+    "notes": "Mobile profile - Slow 4G-like parameters per thesis specification. Only measuring pages that exist."
+  },
+  "pageGroups": {
+    "product": {
+      "count": 24,
+      "urls": [
+        "https://luxe-coral.vercel.app/"
+      ]
+    },
+    "shop": {
+      "count": 24,
+      "urls": [
+        "https://luxe-coral.vercel.app/shop"
+      ]
+    }
+  },
+  "summary": {
+    "product": {
+      "performance": {
+        "min": 62,
+        "max": 93,
+        "median": 92,
+        "mean": 88.79166666666667,
+        "p95": 93,
+        "stdDev": 7.847394295065226
+      },
+      "fcp": {
+        "min": 1927.822,
+        "max": 5148.484,
+        "median": 2047.713,
+        "mean": 2290.7629583333332,
+        "p95": 3474.749,
+        "stdDev": 729.951303222658
+      },
+      "lcp": {
+        "min": 2620.989,
+        "max": 6318.621,
+        "median": 2711.115,
+        "mean": 3065.60325,
+        "p95": 4904.375,
+        "stdDev": 917.4235695144332
+      },
+      "tbt": {
+        "min": 162.48599999999988,
+        "max": 198.25800000000072,
+        "median": 180.10199999999986,
+        "mean": 180.4682916665075,
+        "p95": 196.16899999999987,
+        "stdDev": 8.381249526350604
+      },
+      "speedIndex": {
+        "min": 2065,
+        "max": 5262,
+        "median": 2164,
+        "mean": 2414.8333333333335,
+        "p95": 3594,
+        "stdDev": 727.5264981810325
+      },
+      "tti": {
+        "min": 7219.281,
+        "max": 9368.22,
+        "median": 7350.348,
+        "mean": 7542.093000000001,
+        "p95": 8951.783,
+        "stdDev": 523.2533732813337
+      },
+      "totalSize": {
+        "min": 0.3507413864135742,
+        "max": 0.35332489013671875,
+        "median": 0.35081958770751953,
+        "mean": 0.35129984219868976,
+        "p95": 0.35329532623291016,
+        "stdDev": 0.0009418146667448546
+      },
+      "requests": {
+        "min": 33,
+        "max": 33,
+        "median": 33,
+        "mean": 33,
+        "p95": 33,
+        "stdDev": 0
+      },
+      "domSize": {
+        "min": 365,
+        "max": 365,
+        "median": 365,
+        "mean": 365,
+        "p95": 365,
+        "stdDev": 0
+      },
+      "serverResponseTime": {
+        "min": 4.851,
+        "max": 36.617,
+        "median": 6.635,
+        "mean": 8.509375000000002,
+        "p95": 13.404,
+        "stdDev": 6.337162567035949
+      },
+      "mainThreadWork": {
+        "min": 913.5429999999982,
+        "max": 1030.6849999999963,
+        "median": 966.348999999997,
+        "mean": 969.1825416666638,
+        "p95": 1014.8099999999973,
+        "stdDev": 27.92025919468248
+      },
+      "bootupTime": {
+        "min": 422.38499999999965,
+        "max": 475.47499999999957,
+        "median": 452.8629999999994,
+        "mean": 450.25399999999945,
+        "p95": 466.7219999999995,
+        "stdDev": 13.47111851332318
+      }
+    },
+    "shop": {
+      "performance": {
+        "min": 67,
+        "max": 89,
+        "median": 88,
+        "mean": 82.95833333333333,
+        "p95": 89,
+        "stdDev": 8.288944276699066
+      },
+      "fcp": {
+        "min": 1909.324,
+        "max": 3219.437,
+        "median": 2054.354,
+        "mean": 2172.1063333333336,
+        "p95": 3102.685,
+        "stdDev": 402.6155087267573
+      },
+      "lcp": {
+        "min": 3336.298,
+        "max": 7135.682,
+        "median": 3450.736,
+        "mean": 4381.539124999999,
+        "p95": 7125.482,
+        "stdDev": 1477.0238772598407
+      },
+      "tbt": {
+        "min": 126.55099999999948,
+        "max": 176.98300000000017,
+        "median": 140.59900000000016,
+        "mean": 145.3152083325385,
+        "p95": 169.41599999999926,
+        "stdDev": 14.69770489764804
+      },
+      "speedIndex": {
+        "min": 2201,
+        "max": 3836,
+        "median": 2318,
+        "mean": 2570,
+        "p95": 3718,
+        "stdDev": 520.6524752654116
+      },
+      "tti": {
+        "min": 6507.393,
+        "max": 8662.692,
+        "median": 8342.535,
+        "mean": 8150.625458332856,
+        "p95": 8559.328000003814,
+        "stdDev": 518.2075654774585
+      },
+      "totalSize": {
+        "min": 0.3440256118774414,
+        "max": 0.40262413024902344,
+        "median": 0.4025135040283203,
+        "mean": 0.3928079605102539,
+        "p95": 0.4025764465332031,
+        "stdDev": 0.01860830229021345
+      },
+      "requests": {
+        "min": 30,
+        "max": 33,
+        "median": 33,
+        "mean": 32.5,
+        "p95": 33,
+        "stdDev": 0.9574271077563381
+      },
+      "domSize": {
+        "min": 216,
+        "max": 216,
+        "median": 216,
+        "mean": 216,
+        "p95": 216,
+        "stdDev": 0
+      },
+      "serverResponseTime": {
+        "min": 5.389,
+        "max": 18.055999999999997,
+        "median": 7.5600000000000005,
+        "mean": 8.709999999999999,
+        "p95": 13.280999999999999,
+        "stdDev": 3.1772696743168227
+      },
+      "mainThreadWork": {
+        "min": 887.6419999999974,
+        "max": 2562.070999999841,
+        "median": 2441.408999999883,
+        "mean": 2015.2176249999309,
+        "p95": 2533.6249999998836,
+        "stdDev": 658.2387901104019
+      },
+      "bootupTime": {
+        "min": 436.2609999999996,
+        "max": 1792.3509999999148,
+        "median": 1676.4699999999625,
+        "mean": 1333.3502499999768,
+        "p95": 1728.668999999949,
+        "stdDev": 531.4322620623944
+      }
+    }
+  }
+}
